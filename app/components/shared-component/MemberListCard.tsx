@@ -1,0 +1,76 @@
+import { Check, CheckCircle2, X } from "lucide-react";
+import ImageComponent from "./ImageComponent";
+
+function MemberListCard({
+  name,
+  smkId,
+  imageApiUrl,
+  onStatusAction,
+}: {
+  name: string;
+  smkId: string;
+  imageApiUrl: string;
+  onStatusAction?: (status: "present" | "late" | "absent" | "excused") => void;
+}) {
+  return (
+    <div className="flex w-full flex-row justify-center items-start gap-2 rounded-xl border border-gray-100 bg-white p-2 shadow-sm transition-all">
+      {/* Avatar Section */}
+      <div className="shrink-0">
+        <ImageComponent src={imageApiUrl} alt={name} />
+      </div>
+
+      {/* Content Section */}
+      <div className="flex flex-1 flex-col">
+        {/* Name */}
+        <h3 className="text-sm font-bold text-textColor capitalize">{name}</h3>
+
+        {/* ID Section */}
+        <p className="text-xs font-medium text-gray-400">
+          SMK ID: <span className="text-gray-600 font-semibold">{smkId}</span>
+        </p>
+
+        {/* Status Icons Row */}
+        <div className="w-full flex justify-start items-center gap-8 mt-0.5">
+          {/* 1. Present / Green Check */}
+          <button
+            onClick={() => onStatusAction && onStatusAction("present")}
+            className="flex h-10 w-10 items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-95"
+            aria-label="Mark Present"
+          >
+            <Check size={24} className="text-green-400" />
+            <span className="sr-only">Present</span>
+          </button>
+
+          {/* 2. Late / Warning */}
+          <button
+            onClick={() => onStatusAction && onStatusAction("late")}
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-transform hover:scale-110"
+            aria-label="Mark Late"
+          >
+            <span className="text-2xl font-bold text-amber-400">!</span>
+          </button>
+
+          {/* 3. Absent / Red Cross */}
+          <button
+            onClick={() => onStatusAction && onStatusAction("absent")}
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-transform hover:scale-110"
+            aria-label="Mark Absent"
+          >
+            <X size={28} className="text-rose-500" />
+          </button>
+
+          {/* 4. Other / Grey Check */}
+          <button
+            onClick={() => onStatusAction && onStatusAction("excused")}
+            className="flex h-8 w-8 items-center justify-center rounded-full transition-transform hover:scale-110"
+            aria-label="Mark Excused"
+          >
+            <Check size={28} className="text-gray-300" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default MemberListCard;
