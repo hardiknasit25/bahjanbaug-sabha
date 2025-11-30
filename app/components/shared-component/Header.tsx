@@ -22,7 +22,7 @@ function Header({ iconName = "Menu", title, children, href }: HeaderProps) {
   );
 
   return (
-    <div className="w-full bg-primaryColor h-12 flex justify-between items-center text-white p-2 px-3">
+    <div className="w-full bg-primaryColor h-12 flex justify-between items-center text-white p-2 px-3 z-40">
       <div className="flex items-center gap-2">
         {IconElement}
         <span className="uppercase text-sm">{title}</span>

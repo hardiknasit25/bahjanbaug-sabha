@@ -21,28 +21,13 @@ export default function Members() {
     console.log(`Member ${smkNo} status changed to ${status}`);
   };
 
-  if (loading) {
-    return (
-      <LayoutWrapper>
-        <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Loading members...</p>
-        </div>
-      </LayoutWrapper>
-    );
-  }
-
-  if (error) {
-    return (
-      <LayoutWrapper>
-        <div className="flex justify-center items-center h-64">
-          <p className="text-red-500">Error: {error}</p>
-        </div>
-      </LayoutWrapper>
-    );
-  }
-
   return (
-    <LayoutWrapper>
+    <LayoutWrapper
+      headerConfigs={{
+        title: "Members",
+        iconName: "UsersRound",
+      }}
+    >
       <div className="flex flex-col">
         {members.map((member) => (
           <MemberListCard

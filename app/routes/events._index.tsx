@@ -1,5 +1,6 @@
 import { CirclePlus } from "lucide-react";
 import { Link } from "react-router";
+import EventCard from "~/components/shared-component/EventCard";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 
 export default function Events() {
@@ -15,7 +16,11 @@ export default function Events() {
         ),
       }}
     >
-      <div>Events</div>
+      <div className="p-4 grid grid-cols-1 gap-2">
+        {Array.from({ length: 15 }).map((_, index) => (
+          <EventCard key={index} />
+        ))}
+      </div>
     </LayoutWrapper>
   );
 }

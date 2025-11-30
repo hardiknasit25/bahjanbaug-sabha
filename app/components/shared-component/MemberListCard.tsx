@@ -17,7 +17,7 @@ function MemberListCard({
   onStatusAction?: (status: "present" | "late" | "absent" | "excused") => void;
 }) {
   return (
-    <div className="flex w-full flex-row justify-center items-start gap-2 rounded-xl border border-gray-100 bg-white p-2 shadow-sm transition-all">
+    <div className="flex justify-center items-start gap-2 border border-borderColor/20 bg-white p-2 transition-all">
       {/* Avatar Section */}
       <div className="shrink-0">
         <ImageComponent src={imageApiUrl} alt={name} />
@@ -34,11 +34,11 @@ function MemberListCard({
         </p>
 
         {/* Status Icons Row */}
-        <div className="w-full flex justify-start items-center gap-8 mt-0.5">
+        <div className="w-full flex justify-start items-center gap-8">
           {/* 1. Present / Green Check */}
           <button
             onClick={() => onStatusAction && onStatusAction("present")}
-            className="flex h-10 w-10 items-center justify-center rounded-full transition-transform hover:scale-105 active:scale-95"
+            className="flex items-center justify-center rounded-full transition-transform active:scale-95 p-2"
             aria-label="Mark Present"
           >
             <Check size={24} className="text-green-400" />

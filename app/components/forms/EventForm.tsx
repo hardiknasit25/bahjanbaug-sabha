@@ -5,12 +5,13 @@ import InputController from "../formController.tsx/InputController";
 import SelectController from "../formController.tsx/SelectController";
 import TextAreaController from "../formController.tsx/TextAreaController";
 import SubmitButton from "../shared-component/SubmitButton";
+import { useNavigate } from "react-router";
 
 // Zod schema for form validation
 const eventFormSchema = z.object({
   sabhaName: z.string().min(1, "Sabha name is required"),
   date: z.string().min(1, "Date is required"),
-  description: z.string().min(1, "Description is required"),
+  description: z.string().optional(),
 });
 
 type EventFormData = z.infer<typeof eventFormSchema>;
@@ -26,6 +27,8 @@ const dateOptions = [
 ];
 
 function EventForm() {
+  const navigate = useNavigate();
+
   const {
     control,
     handleSubmit,
@@ -42,10 +45,12 @@ function EventForm() {
 
   const onSubmit = (data: EventFormData) => {
     console.log("Form Data:", data);
+    navigate("/events");
   };
 
   const handleCancel = () => {
     reset();
+    navigate("/events");
   };
 
   return (

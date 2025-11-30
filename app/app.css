@@ -6,7 +6,7 @@
 
 html,
 body {
-  @apply bg-white text-textColor dark:bg-gray-950;
+  @apply bg-white text-textColor dark:bg-gray-950 overflow-hidden;
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
