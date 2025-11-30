@@ -4,15 +4,15 @@ import type { MetaArgs } from "react-router";
 
 export function meta({}: MetaArgs) {
   return [
-    { title: "Events Page" },
+    { title: "New React Router App" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
 
-export default function Events() {
+export default function Home() {
   return (
     <LayoutWrapper>
-      <div>Events</div>
+      <Welcome />
     </LayoutWrapper>
   );
 }
