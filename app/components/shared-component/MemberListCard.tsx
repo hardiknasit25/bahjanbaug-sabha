@@ -1,15 +1,19 @@
-import { Check, CheckCircle2, X } from "lucide-react";
+import { Check, X } from "lucide-react";
 import ImageComponent from "./ImageComponent";
+import MemberStatusBadge from "./MemberStatusBadge";
+import type { MemberStatus } from "~/types/members.interface";
 
 function MemberListCard({
   name,
   smkId,
   imageApiUrl,
+  status = "pending",
   onStatusAction,
 }: {
   name: string;
   smkId: string;
   imageApiUrl: string;
+  status?: MemberStatus;
   onStatusAction?: (status: "present" | "late" | "absent" | "excused") => void;
 }) {
   return (

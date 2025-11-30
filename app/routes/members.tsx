@@ -1,6 +1,7 @@
 import type { MetaArgs } from "react-router";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 import MemberListCard from "~/components/shared-component/MemberListCard";
+import { useMembers } from "~/hooks/useMembers";
 
 export function meta({}: MetaArgs) {
   return [
@@ -10,74 +11,48 @@ export function meta({}: MetaArgs) {
 }
 
 export default function Members() {
-  const members = [
-    {
-      name: "Abhishek Hasmukhbhai Radadiya",
-      smkId: "SMK001",
-      imageApiUrl: "",
-    },
-    {
-      name: "Harikrushna Ghanshyambhai Vaghasiya",
-      smkId: "SMK002",
-      imageApiUrl: "",
-    },
-    {
-      name: "Charlie Brown",
-      smkId: "SMK003",
-      imageApiUrl: "",
-    },
-    {
-      name: "David Lee",
-      smkId: "SMK004",
-      imageApiUrl: "",
-    },
-    {
-      name: "Eva Green",
-      smkId: "SMK005",
-      imageApiUrl: "",
-    },
-    {
-      name: "Frank Ocean",
-      smkId: "SMK006",
-      imageApiUrl: "",
-    },
-    {
-      name: "Grace Hopper",
-      smkId: "SMK007",
-      imageApiUrl: "",
-    },
-    {
-      name: "Harry Potter",
-      smkId: "SMK008",
-      imageApiUrl: "",
-    },
-    {
-      name: "Irene Adler",
-      smkId: "SMK009",
-      imageApiUrl: "",
-    },
-    {
-      name: "John Doe",
-      smkId: "SMK010",
-      imageApiUrl: "",
-    },
-  ];
+  const { members, loading, error, updateStatus } = useMembers();
 
-  const handleStatusChange = (smkId: string, status: string) => {
-    console.log(`Member ${smkId} status changed to ${status}`);
+  const handleStatusChange = (
+    smkNo: string,
+    status: "present" | "late" | "absent" | "excused"
+  ) => {
+    updateStatus(smkNo, status);
+    console.log(`Member ${smkNo} status changed to ${status}`);
   };
+
+  if (loading) {
+    return (
+      <LayoutWrapper>
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Loading members...</p>
+        </div>
+      </LayoutWrapper>
+    );
+  }
+
+  if (error) {
+    return (
+      <LayoutWrapper>
+        <div className="flex justify-center items-center h-64">
+          <p className="text-red-500">Error: {error}</p>
+        </div>
+      </LayoutWrapper>
+    );
+  }
 
   return (
     <LayoutWrapper>
       <div className="flex flex-col">
         {members.map((member) => (
           <MemberListCard
-            key={member.smkId}
+            key={member.smk_no}
             name={member.name}
-            smkId={member.smkId}
-            imageApiUrl={member.imageApiUrl}
+            smkId={member.smk_no}
+            imageApiUrl={member.img}
+            status={member.status}
             onStatusAction={(status) =>
-              handleStatusChange(member.smkId, status)
+              handleStatusChange(member.smk_no, status)
             }
           />
         ))}

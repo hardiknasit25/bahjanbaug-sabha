@@ -28,7 +28,7 @@ function ImageComponent({
 
   return (
     <div
-      className={`relative overflow-hidden p-1 h-[75px] w-[75px] rounded-full border border-primaryColor ${className}`}
+      className={`relative overflow-hidden p-1 h-[65px] w-[65px] rounded-full border border-primaryColor ${className}`}
     >
       {/* 1. Local Placeholder Image */}
       {showPlaceholder && (
