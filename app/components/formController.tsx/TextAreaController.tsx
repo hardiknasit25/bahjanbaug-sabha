@@ -7,48 +7,48 @@ import {
 import { cn } from "~/lib/utils";
 import ErrorMessage from "../shared-component/ErrorMessage";
 
-interface InputControllerProps<T extends FieldValues> {
+interface TextAreaControllerProps<T extends FieldValues> {
   name: FieldPath<T>;
   control: Control<T>;
   label?: string;
   placeholder?: string;
-  type?: string;
   className?: string;
   disabled?: boolean;
+  rows?: number;
 }
 
-function InputController<T extends FieldValues>({
+function TextAreaController<T extends FieldValues>({
   name,
   control,
   label,
   placeholder,
-  type = "text",
   className,
   disabled = false,
-}: InputControllerProps<T>) {
+  rows = 4,
+}: TextAreaControllerProps<T>) {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <div className="space-y-1">
+        <div className="space-y-2">
           {label && (
             <label
               htmlFor={name}
-              className="text-base font-medium text-textColor leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               {label} :
             </label>
           )}
-          <input
+          <textarea
             {...field}
             id={name}
-            type={type}
+            rows={rows}
             placeholder={placeholder}
             disabled={disabled}
             className={cn(
-              "flex w-full rounded-sm border border-borderColor bg-white p-2 text-sm text-textColor outline-none uppercase",
-              error && "border-deleteBorderColor",
+              "flex w-full rounded-sm border border-borderColor bg-white p-2 text-sm text-textColor outline-none",
+              error && "border-red-500 focus-visible:ring-red-500",
               className
             )}
           />
@@ -59,4 +59,4 @@ function InputController<T extends FieldValues>({
   );
 }
 
-export default InputController;
+export default TextAreaController;

@@ -1,3 +1,4 @@
+import EventForm from "~/components/forms/EventForm";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 
 function createEvent() {
@@ -10,7 +11,7 @@ function createEvent() {
         href: "/events",
       }}
     >
-      <div>Create Sabha</div>
+      <EventForm />
     </LayoutWrapper>
   );
 }
