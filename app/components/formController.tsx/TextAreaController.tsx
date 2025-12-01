@@ -4,7 +4,6 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import { cn } from "~/lib/utils";
 import ErrorMessage from "../shared-component/ErrorMessage";
 
 interface TextAreaControllerProps<T extends FieldValues> {
@@ -46,11 +45,9 @@ function TextAreaController<T extends FieldValues>({
             rows={rows}
             placeholder={placeholder}
             disabled={disabled}
-            className={cn(
-              "flex w-full rounded-sm border border-borderColor bg-white p-2 text-sm text-textColor outline-none",
-              error && "border-red-500 focus-visible:ring-red-500",
-              className
-            )}
+            className={`flex w-full rounded-sm border bg-white p-2 text-sm text-textColor outline-none ${
+              error ? "border-red-500" : "border-borderColor"
+            } ${className || ""}`}
           />
           {error && <ErrorMessage error={error.message as string} />}
         </div>

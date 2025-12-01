@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import type { HeaderProps } from "./Header";
 import Header from "./Header";
-import { cn } from "~/lib/utils";
 import Tab from "./Tab";
 
 function LayoutWrapper({
@@ -33,11 +32,9 @@ function LayoutWrapper({
       )}
 
       <div
-        className={cn(
-          "flex-1 overflow-y-auto overflow-x-hidden",
-          showTab ? "mb-16" : "",
-          className
-        )}
+        className={`flex-1 overflow-y-auto overflow-x-hidden ${
+          showTab ? "mb-16" : ""
+        } ${className || ""}`}
       >
         {children}
       </div>

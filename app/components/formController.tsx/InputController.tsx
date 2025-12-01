@@ -4,7 +4,6 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form";
-import { cn } from "~/lib/utils";
 import ErrorMessage from "../shared-component/ErrorMessage";
 
 interface InputControllerProps<T extends FieldValues> {
@@ -15,6 +14,7 @@ interface InputControllerProps<T extends FieldValues> {
   type?: string;
   className?: string;
   disabled?: boolean;
+  required?: boolean;
 }
 
 function InputController<T extends FieldValues>({
@@ -25,6 +25,7 @@ function InputController<T extends FieldValues>({
   type = "text",
   className,
   disabled = false,
+  required = false,
 }: InputControllerProps<T>) {
   return (
     <Controller
@@ -37,7 +38,8 @@ function InputController<T extends FieldValues>({
               htmlFor={name}
               className="text-base font-medium text-textColor leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
-              {label} :
+              {label}
+              {required && <span className="text-errorColor ml-1">*</span>}
             </label>
           )}
           <input
@@ -46,11 +48,9 @@ function InputController<T extends FieldValues>({
             type={type}
             placeholder={placeholder}
             disabled={disabled}
-            className={cn(
-              "flex w-full rounded-sm border border-borderColor bg-white p-2 text-sm text-textColor outline-none uppercase",
-              error && "border-deleteBorderColor",
-              className
-            )}
+            className={`flex w-full rounded-sm border bg-white p-2 text-sm text-textColor outline-none uppercase ${
+              error ? "border-deleteBorderColor" : "border-borderColor"
+            } ${className || ""}`}
           />
           {error && <ErrorMessage error={error.message as string} />}
         </div>

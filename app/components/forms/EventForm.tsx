@@ -2,29 +2,28 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import InputController from "../formController.tsx/InputController";
-import SelectController from "../formController.tsx/SelectController";
+import DatePickerController from "../formController.tsx/DatePickerController";
 import TextAreaController from "../formController.tsx/TextAreaController";
 import SubmitButton from "../shared-component/SubmitButton";
 import { useNavigate } from "react-router";
+import { Button } from "../ui/button";
+import { useState } from "react";
+import { Calendar } from "../ui/calendar";
 
 // Zod schema for form validation
 const eventFormSchema = z.object({
   sabhaName: z.string().min(1, "Sabha name is required"),
-  date: z.string().min(1, "Date is required"),
+  date: z
+    .string()
+    .min(1, "Date is required")
+    .refine((date) => {
+      const parsedDate = new Date(date);
+      return !isNaN(parsedDate.getTime()) && parsedDate >= new Date();
+    }, "Please select a valid future date"),
   description: z.string().optional(),
 });
 
 type EventFormData = z.infer<typeof eventFormSchema>;
-
-// Date options for select dropdown
-const dateOptions = [
-  { value: "2024-01-01", label: "January 1, 2024" },
-  { value: "2024-01-15", label: "January 15, 2024" },
-  { value: "2024-02-01", label: "February 1, 2024" },
-  { value: "2024-02-15", label: "February 15, 2024" },
-  { value: "2024-03-01", label: "March 1, 2024" },
-  { value: "2024-03-15", label: "March 15, 2024" },
-];
 
 function EventForm() {
   const navigate = useNavigate();
@@ -53,6 +52,8 @@ function EventForm() {
     navigate("/events");
   };
 
+  const [date, setDate] = useState<Date | undefined>(new Date(2025, 5, 12));
+
   return (
     <div className="w-full p-4">
       <form
@@ -65,14 +66,15 @@ function EventForm() {
           label="Sabha Name"
           placeholder="Enter sabha name"
           className="w-full"
+          required
         />
-        <SelectController
+        <DatePickerController
           name="date"
           control={control}
           label="Select Date"
           placeholder="Choose a date"
-          options={dateOptions}
           className="w-full"
+          required
         />
         <TextAreaController
           name="description"
@@ -82,6 +84,13 @@ function EventForm() {
           rows={4}
           className="w-full"
         />
+        <Calendar
+          mode="single"
+          defaultMonth={date}
+          selected={date}
+          onSelect={setDate}
+          className="rounded-lg border shadow-sm"
+        />
         <div className="flex gap-4 pt-4">
           <button
             type="button"
@@ -90,6 +99,8 @@ function EventForm() {
           >
             Cancel
           </button>
+
+          <Button variant="destructive">Click Me</Button>
 
           <SubmitButton
             buttonText="Create"
