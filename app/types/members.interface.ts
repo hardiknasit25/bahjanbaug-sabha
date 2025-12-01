@@ -5,9 +5,4 @@ export interface MemberData {
   status: MemberStatus;
 }
 
-export type MemberStatus =
-  | "present"
-  | "late"
-  | "absent"
-  | "excused"
-  | "pending";
+export type MemberStatus = "present" | "absent";

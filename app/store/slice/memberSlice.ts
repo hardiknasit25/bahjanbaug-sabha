@@ -13,61 +13,61 @@ const initialState: MemberState = {
       name: "Abhishek Hasmukhbhai Radadiya",
       smk_no: "SMK001",
       img: "",
-      status: "pending",
+      status: "present",
     },
     {
       name: "Harikrushna Ghanshyambhai Vaghasiya",
       smk_no: "SMK002",
       img: "",
-      status: "pending",
+      status: "present",
     },
     {
       name: "Charlie Brown",
       smk_no: "SMK003",
       img: "",
-      status: "pending",
+      status: "absent",
     },
     {
       name: "David Lee",
       smk_no: "SMK004",
       img: "",
-      status: "pending",
+      status: "absent",
     },
     {
       name: "Eva Green",
       smk_no: "SMK005",
       img: "",
-      status: "pending",
+      status: "absent",
     },
     {
       name: "Frank Ocean",
       smk_no: "SMK006",
       img: "",
-      status: "pending",
+      status: "absent",
     },
     {
       name: "Grace Hopper",
       smk_no: "SMK007",
       img: "",
-      status: "pending",
+      status: "absent",
     },
     {
       name: "Harry Potter",
       smk_no: "SMK008",
       img: "",
-      status: "pending",
+      status: "absent",
     },
     {
       name: "Irene Adler",
       smk_no: "SMK009",
       img: "",
-      status: "pending",
+      status: "absent",
     },
     {
       name: "John Doe",
       smk_no: "SMK010",
       img: "",
-      status: "pending",
+      status: "absent",
     },
   ],
   loading: false,
@@ -91,7 +91,7 @@ const memberSlice = createSlice({
     addMember: (state, action: PayloadAction<MemberData>) => {
       const newMember: MemberData = {
         ...action.payload,
-        status: "pending",
+        status: "absent",
       };
       state.members.push(newMember);
     },
@@ -101,7 +101,7 @@ const memberSlice = createSlice({
     setMembers: (state, action: PayloadAction<MemberData[]>) => {
       state.members = action.payload.map((member) => ({
         ...member,
-        status: "pending" as MemberStatus,
+        status: "absent" as MemberStatus,
       }));
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
