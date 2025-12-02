@@ -22,7 +22,7 @@ export default function Report() {
   return (
     <LayoutWrapper
       headerConfigs={{
-        title: "Members",
+        title: "Report",
         children: (
           <Link to="/members/create-member">
             <EllipsisVertical />

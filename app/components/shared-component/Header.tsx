@@ -23,6 +23,7 @@ export interface HeaderProps {
   searchValue?: string;
   searchPlaceholder?: string;
   onSearchChange?: (value: string) => void;
+  showSorting?: boolean;
 }
 
 function Header({
@@ -36,6 +37,7 @@ function Header({
   searchValue,
   searchPlaceholder,
   onSearchChange,
+  showSorting,
 }: HeaderProps) {
   const IconComponent = LucideIcons[iconName] as React.ComponentType<any>;
 
@@ -81,21 +83,29 @@ function Header({
       </div>
 
       {showSearch && onSearchChange && (
-        <div className="relative w-full h-10 bg-white rounded-full flex justify-start items-center gap-2 p-2 mb-1">
-          <LucideIcons.Search size={20} className="text-textLightColor" />
-          <input
-            type="text"
-            value={searchValue}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="bg-transparent placeholder:text-textLightColor text-textColor outline-none"
-            placeholder={searchPlaceholder || "Search member..."}
-          />
-          {searchValue && (
-            <LucideIcons.X
-              size={20}
-              onClick={() => onSearchChange("")}
-              className="text-textLightColor absolute right-3 cursor-pointer"
+        <div className="w-full flex justify-start items-start gap-2">
+          <div className="relative w-full h-10 bg-white rounded-full flex justify-start items-center gap-2 p-2 mb-1">
+            <LucideIcons.Search size={20} className="text-textLightColor" />
+            <input
+              type="text"
+              value={searchValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="bg-transparent placeholder:text-textLightColor text-textColor outline-none"
+              placeholder={searchPlaceholder || "Search member..."}
             />
+            {searchValue && (
+              <LucideIcons.X
+                size={20}
+                onClick={() => onSearchChange("")}
+                className="text-textLightColor absolute right-3 cursor-pointer"
+              />
+            )}
+          </div>
+          {showSorting && (
+            <div className="flex h-10 px-4 rounded-full justify-center items-center gap-2 border border-white">
+              <LucideIcons.ListFilter size={16} />
+              <span className="uppercase text-sm">sort</span>
+            </div>
           )}
         </div>
       )}

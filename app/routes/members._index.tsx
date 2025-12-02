@@ -37,6 +37,7 @@ export default function Members() {
           setSearchText(value);
           console.log("Search value changed:", value);
         },
+        showSorting: true,
       }}
     >
       <ClientOnly

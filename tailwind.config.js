@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       fontFamily: {
         funnel: ["Funnel Display", "sans-serif"],
-        poppins : ["Poppins", "Funnel Display", "sans-serif"],
+        poppins: ["Poppins", "Funnel Display", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -65,6 +65,9 @@ module.exports = {
         cancelButtonColor: "#f9fafb",
         eventCardColor: "#EAEEFA",
         eventCardBorderColor: "#587BF3",
+        greenTextColor: "#22c55e",
+        redTextColor: "#ef4444",
+        blueTextColor: "#3b82f6",
       },
       borderRadius: {
         lg: "var(--radius)",

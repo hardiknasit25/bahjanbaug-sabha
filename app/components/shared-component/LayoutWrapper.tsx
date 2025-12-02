@@ -32,6 +32,7 @@ function LayoutWrapper({
             searchValue={headerConfigs.searchValue}
             searchPlaceholder={headerConfigs.searchPlaceholder}
             onSearchChange={headerConfigs.onSearchChange}
+            showSorting={headerConfigs.showSorting}
           >
             {headerConfigs.children}
           </Header>

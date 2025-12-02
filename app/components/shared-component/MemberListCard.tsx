@@ -1,6 +1,7 @@
 import { ChartColumn, Check, Percent, X } from "lucide-react";
 import type { MemberData } from "~/types/members.interface";
 import ImageComponent from "./ImageComponent";
+import { useNavigate } from "react-router";
 
 function MemberListCard({
   member,
@@ -9,12 +10,19 @@ function MemberListCard({
   member: MemberData;
   from: "attendance" | "members";
 }) {
+  const navigate = useNavigate();
   const handleStatusAction = (status: string) => {
     console.log(`Member ${member.first_name} marked as ${status}`);
   };
 
   return (
-    <div className="flex justify-center items-start gap-2 border border-borderColor/20 p-2 transition-all">
+    <div
+      className="flex justify-center items-start gap-2 border border-borderColor/20 p-2 transition-all"
+      onClick={() => {
+        if (from === "attendance") return;
+        else navigate(`/members/details/${member.id}`);
+      }}
+    >
       {/* Avatar Section */}
       <div className="shrink-0">
         <ImageComponent src={member.img} alt={member.first_name} />
@@ -76,19 +84,19 @@ function MemberListCard({
         {from === "members" && (
           <div className="w-full flex justify-start items-center mt-1">
             <div className="flex justify-start items-center gap-2 border-r border-r-borderColor pr-4">
-              <p className="bg-green-200 size-5 flex justify-center items-center text-xs rounded-full text-green-600">
+              <p className="bg-green-200 size-5 flex justify-center items-center text-xs rounded-full text-greenTextColor">
                 P
               </p>
               <span className="text-green-700">4/5</span>
             </div>
             <div className="flex justify-start items-center gap-2 border-r border-r-borderColor px-4">
-              <p className="bg-red-200 size-5 flex justify-center items-center text-xs rounded-full text-red-600">
+              <p className="bg-red-200 size-5 flex justify-center items-center text-xs rounded-full text-redTextColor">
                 A
               </p>
               <span className="text-red-700">1/5</span>
             </div>
             <div className="flex justify-start items-center gap-2 px-4">
-              <ChartColumn size={16} className="text-blue-600" />
+              <ChartColumn size={16} className="text-blueTextColor" />
               <span className="text-blue-700">90%</span>
             </div>
           </div>
