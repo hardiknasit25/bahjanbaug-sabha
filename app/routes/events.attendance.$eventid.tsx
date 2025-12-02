@@ -1,4 +1,4 @@
-import { CirclePlus, EllipsisVertical } from "lucide-react";
+import { CirclePlus, EllipsisVertical, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { Link, type MetaArgs } from "react-router";
 import { Virtuoso } from "react-virtuoso";
@@ -15,18 +15,23 @@ export function meta({}: MetaArgs) {
   ];
 }
 
-export default function Report() {
+export default function EventAttendance() {
   const { members, loading, error } = useMembers();
   const [searchText, setSearchText] = useState("");
 
   return (
     <LayoutWrapper
       headerConfigs={{
-        title: "Members",
+        title: "Attendance",
+        iconName: "ArrowLeft",
+        href: "/events",
         children: (
-          <Link to="/members/create-member">
-            <EllipsisVertical />
-          </Link>
+          <div className="flex justify-end items-center gap-2">
+            <RotateCcw />
+            <Link to="/members/create-member">
+              <EllipsisVertical />
+            </Link>
+          </div>
         ),
         className: "flex-col gap-2",
         description: `Total ${members.length} Members`,
@@ -39,6 +44,24 @@ export default function Report() {
         },
       }}
     >
+      <div className="flex justify-around items-center p-2 shadow-sm">
+        <div className="flex flex-col justify-center items-center">
+          <span className="text-3xl text-green-500 font-medium font-poppins">
+            137
+          </span>
+          <span className="text-base text-textColor font-medium font-poppins">
+            Pesent
+          </span>
+        </div>
+        <div className="flex flex-col justify-center items-center gap-1">
+          <span className="text-3xl text-red-500 font-medium font-poppins">
+            10
+          </span>
+          <span className="text-base text-textColor font-medium font-poppins">
+            Absent
+          </span>
+        </div>
+      </div>
       <ClientOnly
         fallback={
           <div className="">
@@ -56,7 +79,7 @@ export default function Report() {
               <MemberListCard
                 key={member.smk_no}
                 member={member}
-                from={"members"}
+                from={"attendance"}
               />
             );
           }}

@@ -2,6 +2,15 @@ import * as LucideIcons from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
+import Sidebar from "./Sidebar";
 
 export interface HeaderProps {
   className?: string;
@@ -33,24 +42,31 @@ function Header({
   // Icon element (wrapped in Link if href exists)
   const IconElement = href ? (
     <Link to={href}>
-      <IconComponent size={25} />
+      <IconComponent size={20} />
     </Link>
   ) : (
-    <IconComponent size={25} />
+    <Sheet>
+      <SheetTrigger asChild>
+        <IconComponent size={20} />
+      </SheetTrigger>
+      <SheetContent side={"left"} showCloseIcon={false} className="p-0">
+        <Sidebar />
+      </SheetContent>
+    </Sheet>
   );
 
   return (
     <div
       className={cn(
-        "w-full bg-primaryColor min-h-14 flex justify-between items-center text-white py-1 px-4 z-40",
+        "w-full bg-primaryColor min-h-14 flex justify-between items-center text-white py-2 px-2 z-40",
         className
       )}
     >
       <div className="w-full flex justify-between items-center">
-        <div className="flex-1 flex justify-start items-center gap-2">
+        <div className="flex-1 flex justify-start items-center gap-3">
           {IconElement}
           <div className="flex-1 flex flex-col justify-start items-start">
-            <span className="uppercase text-lg font-medium font-poppins">
+            <span className="uppercase text-base font-medium font-poppins">
               {title}
             </span>
             {description && (

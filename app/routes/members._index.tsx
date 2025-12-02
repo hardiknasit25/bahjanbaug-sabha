@@ -49,7 +49,6 @@ export default function Members() {
         }
       >
         <Virtuoso
-          style={{ height: "100%", width: "100%" }}
           totalCount={members.length}
           itemContent={(index) => {
             const member = members[index];
@@ -61,7 +60,6 @@ export default function Members() {
               />
             );
           }}
-          useWindowScroll
           components={{
             Footer: () => (
               <div className="">

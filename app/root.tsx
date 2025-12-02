@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import type { Route } from "./+types/root";
 import { store } from "./store";
 import "./app.css";
+import { Sheet } from "./components/ui/sheet";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -45,9 +46,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <Outlet />
-    </Provider>
+    <Sheet>
+      <Provider store={store}>
+        <Outlet />
+      </Provider>
+    </Sheet>
   );
 }
 
