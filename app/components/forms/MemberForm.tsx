@@ -1,5 +1,3 @@
-"use client";
-
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback } from "react";
@@ -94,196 +92,200 @@ function MemberForm({
   );
 
   return (
-    <form
-      onSubmit={handleSubmit(handleFormSubmit)}
-      className="w-full space-y-4"
-    >
-      {/* Name Section */}
-      <InputController
-        name="first_name"
-        control={control}
-        label="First Name"
-        placeholder="Enter first name"
-        required
-      />
-
-      <InputController
-        name="middle_name"
-        control={control}
-        label="Middle Name"
-        placeholder="Enter middle name"
-        required
-      />
-
-      <InputController
-        name="last_name"
-        control={control}
-        label="Last Name"
-        placeholder="Enter last name"
-        required
-      />
-
-      <InputController
-        name="email"
-        control={control}
-        label="Email"
-        type="email"
-        placeholder="Enter email address"
-      />
-
-      <InputController
-        name="mobile"
-        control={control}
-        label="Mobile Number"
-        placeholder="Enter 10 digit mobile number"
-        required
-      />
-
-      {/* Role & Organization Section */}
-      <SelectController
-        name="role_id"
-        control={control}
-        label="Role"
-        placeholder="Select a role"
-        options={roleOptions}
-      />
-
-      <InputController
-        name="smk_no"
-        control={control}
-        label="SMK Number"
-        placeholder="Enter SMK number"
-      />
-
-      {/* Personal Information Section */}
-
-      <DatePickerController
-        name="birth_day"
-        control={control}
-        label="Birth Date"
-        placeholder="Select birth date"
-      />
-
-      <SelectController
-        name="satsang_day"
-        control={control}
-        label="Satsang Day"
-        placeholder="Select satsang day"
-        options={satsangDayOptions}
-      />
-
-      <InputController
-        name="mulgam"
-        control={control}
-        label="Mulgam"
-        placeholder="Enter mulgam"
-      />
-
-      <TextAreaController
-        name="address"
-        control={control}
-        label="Address"
-        placeholder="Enter full address"
-        rows={3}
-      />
-
-      {/* Family Status Section */}
-
-      <div className="space-y-2">
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            {...control.register("is_married")}
-            className="w-4 h-4 rounded border-borderColor"
-          />
-          <span className="text-sm text-textColor">Is Married</span>
-        </label>
-      </div>
-
-      <div className="space-y-2">
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            {...control.register("is_family_leader")}
-            className="w-4 h-4 rounded border-borderColor"
-          />
-          <span className="text-sm text-textColor">Is Family Leader</span>
-        </label>
-      </div>
-
-      <InputController
-        name="family_leader_id"
-        control={control}
-        label="Family Leader ID"
-        type="number"
-        placeholder="Enter family leader ID"
-      />
-
-      {/* Occupation Section */}
-
-      <div className="space-y-2">
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            {...control.register("is_job")}
-            className="w-4 h-4 rounded border-borderColor"
-          />
-          <span className="text-sm text-textColor">Has Job</span>
-        </label>
-      </div>
-
-      <SelectController
-        name="occupation"
-        control={control}
-        label="Occupation Type"
-        placeholder="Select occupation type"
-        options={occupationOptions}
-      />
-
-      <InputController
-        name="occupation_field"
-        control={control}
-        label="Occupation Field"
-        placeholder="Enter occupation field"
-      />
-
-      {/* Seva Section */}
-
-      <div className="space-y-2">
-        <label className="flex items-center space-x-2 cursor-pointer">
-          <input
-            type="checkbox"
-            {...control.register("is_seva")}
-            className="w-4 h-4 rounded border-borderColor"
-          />
-          <span className="text-sm text-textColor">Does Seva</span>
-        </label>
-      </div>
-
-      <TextAreaController
-        name="seva"
-        control={control}
-        label="Seva Details"
-        placeholder="Enter seva details"
-        rows={2}
-      />
-
-      <InputController
-        name="parichit_bhakt_name"
-        control={control}
-        label="Parichit Bhakt Name"
-        placeholder="Enter parichit bhakt name"
-      />
-
-      {/* Submit Button */}
-      <div className="pt-4">
-        <SubmitButton
-          buttonText={mode === "create" ? "Create Member" : "Update Member"}
-          loadingButtonText={mode === "create" ? "Creating..." : "Updating..."}
-          loading={isSubmitting}
+    <div className="w-full h-full">
+      <form
+        onSubmit={handleSubmit(handleFormSubmit)}
+        className="w-full space-y-4"
+      >
+        {/* Name Section */}
+        <InputController
+          name="first_name"
+          control={control}
+          label="First Name"
+          placeholder="Enter first name"
+          required
         />
-      </div>
-    </form>
+
+        <InputController
+          name="middle_name"
+          control={control}
+          label="Middle Name"
+          placeholder="Enter middle name"
+          required
+        />
+
+        <InputController
+          name="last_name"
+          control={control}
+          label="Last Name"
+          placeholder="Enter last name"
+          required
+        />
+
+        <InputController
+          name="email"
+          control={control}
+          label="Email"
+          type="email"
+          placeholder="Enter email address"
+        />
+
+        <InputController
+          name="mobile"
+          control={control}
+          label="Mobile Number"
+          placeholder="Enter 10 digit mobile number"
+          required
+        />
+
+        {/* Role & Organization Section */}
+        <SelectController
+          name="role_id"
+          control={control}
+          label="Role"
+          placeholder="Select a role"
+          options={roleOptions}
+        />
+
+        <InputController
+          name="smk_no"
+          control={control}
+          label="SMK Number"
+          placeholder="Enter SMK number"
+        />
+
+        {/* Personal Information Section */}
+
+        <DatePickerController
+          name="birth_day"
+          control={control}
+          label="Birth Date"
+          placeholder="Select birth date"
+        />
+
+        <SelectController
+          name="satsang_day"
+          control={control}
+          label="Satsang Day"
+          placeholder="Select satsang day"
+          options={satsangDayOptions}
+        />
+
+        <InputController
+          name="mulgam"
+          control={control}
+          label="Mulgam"
+          placeholder="Enter mulgam"
+        />
+
+        <TextAreaController
+          name="address"
+          control={control}
+          label="Address"
+          placeholder="Enter full address"
+          rows={3}
+        />
+
+        {/* Family Status Section */}
+
+        <div className="space-y-2">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              {...control.register("is_married")}
+              className="w-4 h-4 rounded border-borderColor"
+            />
+            <span className="text-sm text-textColor">Is Married</span>
+          </label>
+        </div>
+
+        <div className="space-y-2">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              {...control.register("is_family_leader")}
+              className="w-4 h-4 rounded border-borderColor"
+            />
+            <span className="text-sm text-textColor">Is Family Leader</span>
+          </label>
+        </div>
+
+        <InputController
+          name="family_leader_id"
+          control={control}
+          label="Family Leader ID"
+          type="number"
+          placeholder="Enter family leader ID"
+        />
+
+        {/* Occupation Section */}
+
+        <div className="space-y-2">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              {...control.register("is_job")}
+              className="w-4 h-4 rounded border-borderColor"
+            />
+            <span className="text-sm text-textColor">Has Job</span>
+          </label>
+        </div>
+
+        <SelectController
+          name="occupation"
+          control={control}
+          label="Occupation Type"
+          placeholder="Select occupation type"
+          options={occupationOptions}
+        />
+
+        <InputController
+          name="occupation_field"
+          control={control}
+          label="Occupation Field"
+          placeholder="Enter occupation field"
+        />
+
+        {/* Seva Section */}
+
+        <div className="space-y-2">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              {...control.register("is_seva")}
+              className="w-4 h-4 rounded border-borderColor"
+            />
+            <span className="text-sm text-textColor">Does Seva</span>
+          </label>
+        </div>
+
+        <TextAreaController
+          name="seva"
+          control={control}
+          label="Seva Details"
+          placeholder="Enter seva details"
+          rows={2}
+        />
+
+        <InputController
+          name="parichit_bhakt_name"
+          control={control}
+          label="Parichit Bhakt Name"
+          placeholder="Enter parichit bhakt name"
+        />
+
+        {/* Submit Button */}
+        <div className="pt-4">
+          <SubmitButton
+            buttonText={mode === "create" ? "Create Member" : "Update Member"}
+            loadingButtonText={
+              mode === "create" ? "Creating..." : "Updating..."
+            }
+            loading={isSubmitting}
+          />
+        </div>
+      </form>
+    </div>
   );
 }
 

@@ -1,12 +1,12 @@
 import { CirclePlus } from "lucide-react";
+import { useState } from "react";
 import { Link, type MetaArgs } from "react-router";
+import { Virtuoso } from "react-virtuoso";
+import { ClientOnly } from "~/components/shared-component/ClientOnly";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 import MemberListCard from "~/components/shared-component/MemberListCard";
 import MemberSkeleton from "~/components/skeleton/MemberSkeleton";
 import { useMembers } from "~/hooks/useMembers";
-import type { MemberStatus } from "~/types/members.interface";
-import { Virtuoso } from "react-virtuoso";
-import { ClientOnly } from "~/components/shared-component/ClientOnly";
 
 export function meta({}: MetaArgs) {
   return [
@@ -16,12 +16,8 @@ export function meta({}: MetaArgs) {
 }
 
 export default function Members() {
-  const { members, loading, error, updateStatus } = useMembers();
-
-  const handleStatusChange = (smkNo: string, status: MemberStatus) => {
-    updateStatus(smkNo, status);
-    console.log(`Member ${smkNo} status changed to ${status}`);
-  };
+  const { members, loading, error } = useMembers();
+  const [searchText, setSearchText] = useState("");
 
   return (
     <LayoutWrapper
@@ -29,52 +25,54 @@ export default function Members() {
         title: "Members",
         children: (
           <Link to="/members/create-member">
-            <CirclePlus size={20} />
+            <CirclePlus size={25} />
           </Link>
         ),
+        className: "flex-col gap-2",
+        description: `Total ${members.length} Members`,
+        showSearch: true,
+        searchPlaceholder: "Search Members...",
+        searchValue: searchText,
+        onSearchChange: (value: string) => {
+          setSearchText(value);
+          console.log("Search value changed:", value);
+        },
       }}
     >
-      <div className="w-full h-full">
-        <ClientOnly
-          fallback={
-            <div className="">
-              {Array.from({ length: 10 }).map((_, index) => (
-                <MemberSkeleton key={index} />
-              ))}
-            </div>
-          }
-        >
-          <Virtuoso
-            style={{ height: "100%", width: "100%" }}
-            totalCount={members.length}
-            itemContent={(index) => {
-              const member = members[index];
-              return (
-                <MemberListCard
-                  key={member.smk_no}
-                  name={member.name}
-                  smkId={member.smk_no}
-                  imageApiUrl={member.img}
-                  status={member.status}
-                  onStatusAction={(status) =>
-                    handleStatusChange(member.smk_no, status as MemberStatus)
-                  }
-                />
-              );
-            }}
-            components={{
-              Footer: () => (
-                <div className="">
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <MemberSkeleton key={index} />
-                  ))}
-                </div>
-              ),
-            }}
-            className="w-full h-full"
-          />
-        </ClientOnly>
-      </div>
+      <ClientOnly
+        fallback={
+          <div className="">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <MemberSkeleton key={index} />
+            ))}
+          </div>
+        }
+      >
+        <Virtuoso
+          style={{ height: "100%", width: "100%" }}
+          totalCount={members.length}
+          itemContent={(index) => {
+            const member = members[index];
+            return (
+              <MemberListCard
+                key={member.smk_no}
+                member={member}
+                from={"members"}
+              />
+            );
+          }}
+          useWindowScroll
+          components={{
+            Footer: () => (
+              <div className="">
+                {Array.from({ length: 10 }).map((_, index) => (
+                  <MemberSkeleton key={index} />
+                ))}
+              </div>
+            ),
+          }}
+        />
+      </ClientOnly>
     </LayoutWrapper>
   );
 }

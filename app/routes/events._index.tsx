@@ -10,14 +10,14 @@ export default function Events() {
         title: "Events",
         children: (
           <Link to="/events/create-event">
-            <CirclePlus size={20} />
+            <CirclePlus />
           </Link>
         ),
       }}
       className="p-4"
     >
-      <div className="grid grid-cols-1 gap-4">
-        {Array.from({ length: 15 }).map((_, index) => (
+      <div className="w-full grid grid-cols-1 gap-4">
+        {Array.from({ length: 30 }).map((_, index) => (
           <EventCard key={index} />
         ))}
       </div>

@@ -2,6 +2,7 @@ export interface MemberData {
   first_name: string;
   middle_name?: string;
   last_name: string;
+  img: string;
   email?: string;
   mobile: string;
   role_id: number;

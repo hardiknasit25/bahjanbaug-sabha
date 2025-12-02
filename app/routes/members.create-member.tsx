@@ -23,9 +23,11 @@ function CreateMemberForm() {
         iconName: "ArrowLeft",
         href: "/members",
       }}
-      className="p-4"
+      className="p-3"
     >
-      <MemberForm mode="create" onSubmit={handleCreateMember} />
+      <div className="h-full w-full">
+        <MemberForm mode="create" onSubmit={handleCreateMember} />
+      </div>
     </LayoutWrapper>
   );
 }

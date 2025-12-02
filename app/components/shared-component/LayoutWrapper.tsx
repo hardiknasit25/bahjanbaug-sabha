@@ -17,14 +17,20 @@ function LayoutWrapper({
   className?: string;
 }) {
   return (
-    <div className="h-dvh w-full flex flex-col overflow-hidden">
+    <div className="h-full w-full flex flex-col overflow-hidden">
       {/* Header */}
       {showHeader && headerConfigs && (
-        <div className="sticky top-0 z-10 flex-shrink-0">
+        <div className="w-full fixed top-0 right-0 z-10 flex-shrink-0">
           <Header
+            className={headerConfigs.className}
             title={headerConfigs.title}
             iconName={headerConfigs.iconName}
             href={headerConfigs.href}
+            description={headerConfigs.description}
+            showSearch={headerConfigs.showSearch}
+            searchValue={headerConfigs.searchValue}
+            searchPlaceholder={headerConfigs.searchPlaceholder}
+            onSearchChange={headerConfigs.onSearchChange}
           >
             {headerConfigs.children}
           </Header>
@@ -34,7 +40,7 @@ function LayoutWrapper({
       <div
         className={`flex-1 overflow-y-auto overflow-x-hidden ${
           showTab ? "mb-16" : ""
-        } ${className || ""}`}
+        } ${showHeader && headerConfigs?.showSearch ? "mt-[105px]" : showHeader ? "mt-14" : ""} ${className || ""}`}
       >
         {children}
       </div>
