@@ -84,13 +84,6 @@ function EventForm() {
           rows={4}
           className="w-full"
         />
-        <Calendar
-          mode="single"
-          defaultMonth={date}
-          selected={date}
-          onSelect={setDate}
-          className="rounded-lg border shadow-sm"
-        />
         <div className="flex gap-4 pt-4">
           <button
             type="button"
@@ -99,8 +92,6 @@ function EventForm() {
           >
             Cancel
           </button>
-
-          <Button variant="destructive">Click Me</Button>
 
           <SubmitButton
             buttonText="Create"
