@@ -18,7 +18,7 @@ function CircularProgress({ value = 75, size = 70, strokeWidth = 7 }) {
 
         {/* Progress Circle (rotated to start from top) */}
         <circle
-          stroke="#3B82F6"
+          stroke="#22c55e"
           fill="transparent"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
@@ -33,7 +33,7 @@ function CircularProgress({ value = 75, size = 70, strokeWidth = 7 }) {
       </svg>
 
       {/* Center Percentage */}
-      <span className="absolute text-blue-500 font-semibold text-sm">
+      <span className="absolute text-greenTextColor font-semibold text-sm">
         {value}%
       </span>
     </div>

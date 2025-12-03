@@ -7,6 +7,7 @@ module.exports = {
       fontFamily: {
         funnel: ["Funnel Display", "sans-serif"],
         poppins: ["Poppins", "Funnel Display", "sans-serif"],
+        baloobhai: ["Baloo Bhai 2", "Funnel Display", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

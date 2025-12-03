@@ -55,7 +55,7 @@ function Header({
     <Link to={href}>
       <IconComponent size={20} />
     </Link>
-  ) : iconName ? (
+  ) : iconName !== "Menu" ? (
     <IconComponent size={20} onClick={handleIconClick} />
   ) : (
     <Sheet>
@@ -71,7 +71,7 @@ function Header({
   return (
     <div
       className={cn(
-        "w-full bg-primaryColor min-h-14 flex justify-between items-center text-white py-2 px-2 z-40",
+        "w-full bg-primaryColor min-h-14 flex justify-between items-center text-white py-2 px-3 z-40",
         className
       )}
     >
@@ -115,7 +115,7 @@ function Header({
           {showSorting && (
             <div className="flex h-10 px-4 rounded-full justify-center items-center gap-2 border border-white">
               <LucideIcons.ListFilter size={16} />
-              <span className="uppercase text-sm">sort</span>
+              <span className="uppercase text-sm select-none">sort</span>
             </div>
           )}
         </div>

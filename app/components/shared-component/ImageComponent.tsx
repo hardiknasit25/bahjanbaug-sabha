@@ -28,7 +28,7 @@ function ImageComponent({
 
   return (
     <div
-      className={`relative overflow-hidden p-1 h-[65px] w-[65px] rounded-full border border-primaryColor ${className}`}
+      className={`relative overflow-hidden h-[65px] w-[65px] rounded-full border border-primaryColor ${className}`}
     >
       {/* 1. Local Placeholder Image */}
       {showPlaceholder && (
@@ -46,8 +46,8 @@ function ImageComponent({
           alt={alt}
           onLoad={handleLoad}
           onError={handleError}
-          className={`h-full w-full object-cover transition-opacity duration-300 bg-neutral-800 rounded-full ${
-            imageState.loaded ? "opacity-100" : "bg-gray-200 animate-pulse"
+          className={`h-full w-full object-cover transition-opacity duration-300 bg-slate-300 rounded-full ${
+            imageState.loaded ? "opacity-100" : "bg-gray-200"
           }`}
         />
       )}

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, type MetaArgs } from "react-router";
 import { Virtuoso } from "react-virtuoso";
 import { ClientOnly } from "~/components/shared-component/ClientOnly";
+import GroupAccordionMember from "~/components/shared-component/GroupAccordionMember";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 import MemberListCard from "~/components/shared-component/MemberListCard";
 import MemberSkeleton from "~/components/skeleton/MemberSkeleton";
@@ -41,7 +42,7 @@ export default function Members() {
           setSearchText(value);
           console.log("Search value changed:", value);
         },
-        showSorting: true,
+        showSorting: activeTab === "all-members",
       }}
     >
       <Tabs
@@ -78,30 +79,7 @@ export default function Members() {
           />
         </TabsContent>
         <TabsContent value="by-group" className="h-full w-full">
-          <ClientOnly>
-            <Virtuoso
-              totalCount={members.length}
-              itemContent={(index) => {
-                const member = members[index];
-                return (
-                  <MemberListCard
-                    key={member.smk_no}
-                    member={member}
-                    from={"members"}
-                  />
-                );
-              }}
-              components={{
-                Footer: () => (
-                  <div className="">
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <MemberSkeleton key={index} />
-                    ))}
-                  </div>
-                ),
-              }}
-            />
-          </ClientOnly>
+          <GroupAccordionMember />
         </TabsContent>
       </Tabs>
     </LayoutWrapper>
