@@ -8,7 +8,7 @@ function createEvent() {
       headerConfigs={{
         title: "Create Sabha",
         iconName: "ArrowLeft",
-        href: "/events",
+        href: "/sabha",
       }}
     >
       <EventForm />

@@ -10,10 +10,10 @@ export const tabsConfig: TabItem[] = [
     show: true,
   },
   {
-    id: "events",
-    label: "Events",
+    id: "sabha",
+    label: "Sabha",
     icon: CalendarDays,
-    path: "/events",
+    path: "/sabha",
     show: true,
   },
   {

@@ -44,12 +44,12 @@ function EventForm() {
 
   const onSubmit = (data: EventFormData) => {
     console.log("Form Data:", data);
-    navigate("/events");
+    navigate("/sabha");
   };
 
   const handleCancel = () => {
     reset();
-    navigate("/events");
+    navigate("/sabha");
   };
 
   const [date, setDate] = useState<Date | undefined>(new Date(2025, 5, 12));

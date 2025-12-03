@@ -16,7 +16,7 @@ function EventCard() {
 
       {/* Start Button */}
       <Link
-        to={"/events/attendance/10"}
+        to={"/sabha/attendance/10"}
         className="block px-5 py-2 text-sm bg-blue-500 text-white font-medium rounded-full mr-4"
       >
         Start
