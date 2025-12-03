@@ -17,7 +17,10 @@ export function meta({}: MetaArgs) {
   ];
 }
 
+type ReportTabs = "all-members" | "by-group" | "completed-sabha";
+
 export default function Report() {
+  const [activeTab, setActiveTab] = useState<ReportTabs>("all-members");
   const { members, loading, error } = useMembers();
   const [searchText, setSearchText] = useState("");
 
@@ -42,7 +45,8 @@ export default function Report() {
       }}
     >
       <Tabs
-        defaultValue="all-members"
+        value={activeTab}
+        onValueChange={(val) => setActiveTab(val as ReportTabs)}
         className="w-full h-full flex flex-col justify-start"
       >
         <TabsList className="w-full bg-primaryColor rounded-none justify-evenly h-10 pb-2">

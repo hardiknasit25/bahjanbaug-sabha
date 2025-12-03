@@ -16,7 +16,10 @@ export function meta({}: MetaArgs) {
   ];
 }
 
+type MemberTabs = "all-members" | "by-group";
+
 export default function Members() {
+  const [activeTab, setActiveTab] = useState<MemberTabs>("all-members");
   const { members, loading, error } = useMembers();
   const [searchText, setSearchText] = useState("");
 
@@ -42,7 +45,8 @@ export default function Members() {
       }}
     >
       <Tabs
-        defaultValue="all-members"
+        value={activeTab}
+        onValueChange={(val) => setActiveTab(val as MemberTabs)}
         className="w-full h-full flex flex-col justify-start"
       >
         <TabsList className="w-full bg-primaryColor rounded-none justify-evenly h-10 pb-2">

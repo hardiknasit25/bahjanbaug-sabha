@@ -4,9 +4,35 @@ import type { MemberPayload } from "~/types/members.interface";
 
 export const memberService = {
   //#region get members
-  getMembers: async () => {
+  getMembers: async ({
+    pageIndex,
+    pageSize,
+    searchText,
+  }: {
+    pageIndex: number;
+    pageSize: number;
+    searchText?: string;
+  }) => {
     try {
-      const response = await axiosInstance(API_ENDPOINTS.MEMBERS.BASE);
+      const response = await axiosInstance(API_ENDPOINTS.MEMBERS.BASE, {
+        params: {
+          page: pageIndex,
+          size: pageSize,
+          search: searchText,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  //#region get member by id
+  getMemberById: async (memberId: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.MEMBERS.BASE}/${memberId}`
+      );
       return response.data;
     } catch (error) {
       throw error;
