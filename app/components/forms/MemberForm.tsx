@@ -7,6 +7,7 @@ import {
 } from "~/schemas/memberSchema";
 import InputController from "../formController.tsx/InputController";
 import SelectController from "../formController.tsx/SelectController";
+import ChipController from "../formController.tsx/ChipController";
 import DatePickerController from "../formController.tsx/DatePickerController";
 import TextAreaController from "../formController.tsx/TextAreaController";
 import SubmitButton from "../shared-component/SubmitButton";
@@ -95,7 +96,7 @@ function MemberForm({
     <div className="w-full h-full">
       <form
         onSubmit={handleSubmit(handleFormSubmit)}
-        className="w-full space-y-4"
+        className="w-full space-y-4 pb-4"
       >
         {/* Name Section */}
         <InputController
@@ -139,12 +140,14 @@ function MemberForm({
         />
 
         {/* Role & Organization Section */}
-        <SelectController
+        <ChipController
           name="role_id"
           control={control}
           label="Role"
           placeholder="Select a role"
           options={roleOptions}
+          multi={false}
+          required
         />
 
         <InputController
@@ -161,14 +164,16 @@ function MemberForm({
           control={control}
           label="Birth Date"
           placeholder="Select birth date"
+          required
+          disablePastDates={false}
         />
 
-        <SelectController
+        <DatePickerController
           name="satsang_day"
           control={control}
           label="Satsang Day"
           placeholder="Select satsang day"
-          options={satsangDayOptions}
+          disablePastDates={false}
         />
 
         <InputController
@@ -231,12 +236,13 @@ function MemberForm({
           </label>
         </div>
 
-        <SelectController
+        <ChipController
           name="occupation"
           control={control}
           label="Occupation Type"
-          placeholder="Select occupation type"
           options={occupationOptions}
+          multi={false}
+          required
         />
 
         <InputController

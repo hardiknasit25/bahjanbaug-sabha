@@ -8,6 +8,7 @@ import {
 } from "~/components/ui/popover";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
+import { useState } from "react";
 
 interface DatePickerControllerProps {
   name: string;
@@ -17,6 +18,7 @@ interface DatePickerControllerProps {
   className?: string;
   disabled?: boolean;
   required?: boolean;
+  disablePastDates?: boolean;
 }
 
 function DatePickerController({
@@ -27,7 +29,10 @@ function DatePickerController({
   className,
   disabled = false,
   required = false,
+  disablePastDates = true,
 }: DatePickerControllerProps) {
+  const [open, setOpen] = useState(false);
+
   return (
     <Controller
       name={name}
@@ -40,11 +45,13 @@ function DatePickerController({
               {required && <span className="text-red-500 ml-1">*</span>}
             </label>
           )}
-          <Popover>
+
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="default"
                 disabled={disabled}
+                onClick={() => setOpen(true)}
                 className={cn(
                   "flex w-full justify-between items-center !rounded-md !p-2 text-sm text-textColor shadow-none font-normal !bg-white border border-borderColor",
                   !value && "text-textLightColor",
@@ -61,24 +68,31 @@ function DatePickerController({
                 <Calendar className="mr-2 h-4 w-4" />
               </Button>
             </PopoverTrigger>
+
             <PopoverContent className="w-auto p-0" align="start">
               <CalendarComponent
                 mode="single"
                 selected={value ? new Date(value) : undefined}
                 onSelect={(date) => {
-                  if (date) {
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, "0");
-                    const day = String(date.getDate()).padStart(2, "0");
-                    onChange(`${year}-${month}-${day}`);
-                  }
+                  if (!date) return;
+
+                  const year = date.getFullYear();
+                  const month = String(date.getMonth() + 1).padStart(2, "0");
+                  const day = String(date.getDate()).padStart(2, "0");
+
+                  onChange(`${year}-${month}-${day}`);
+                  setOpen(false); // CLOSE POPUP HERE
                 }}
-                disabled={(date) =>
-                  date < new Date(new Date().setHours(0, 0, 0, 0))
+                captionLayout="dropdown"
+                disabled={
+                  disablePastDates
+                    ? (date) => date < new Date(new Date().setHours(0, 0, 0, 0))
+                    : undefined
                 }
               />
             </PopoverContent>
           </Popover>
+
           {error && <p className="text-sm text-red-500">{error.message}</p>}
         </div>
       )}
