@@ -74,6 +74,7 @@ export default function App() {
   return (
     <Sheet>
       <Provider store={store}>
+        <InstallPWA />
         <Outlet />
       </Provider>
     </Sheet>

@@ -62,7 +62,7 @@ export const InstallPWA = () => {
   }
 
   return (
-    <div className="fixed bottom-32 left-4 right-4 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-4 animate-in slide-in-from-bottom-2">
+    <div className="fixed bottom-24 left-4 right-4 z-50 bg-white rounded-lg shadow-lg border border-gray-200 p-4 animate-in slide-in-from-bottom-2 md:bottom-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">

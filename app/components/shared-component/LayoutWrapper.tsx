@@ -20,7 +20,6 @@ function LayoutWrapper({
 }) {
   return (
     <div className="relative h-dvh w-full flex flex-col overflow-hidden">
-      <InstallPWA />
       {/* Header */}
       {showHeader && headerConfigs && (
         <div className="sticky top-0 right-0 z-10 flex-shrink-0">
