@@ -7,13 +7,17 @@ import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useSabha } from "~/hooks/useSabha";
 
+type SabhaTabs = "upcoming-sabha" | "completed-sabha";
+
 export default function Sabha() {
   const {
     sabhaList,
     loading: sabhaLoading,
     totalSabha,
+    setSabhaList,
     fetchSabhaList,
   } = useSabha();
+  const [activeTab, setActiveTab] = useState<SabhaTabs>("upcoming-sabha");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -22,7 +26,7 @@ export default function Sabha() {
     const data = await fetchSabhaList({
       page: pageNum,
       limit: 10,
-      sabah_status: "upcoming",
+      sabah_status: activeTab === "upcoming-sabha" ? "upcoming" : "completed",
     }).unwrap();
     return data.rows;
   };
@@ -51,8 +55,11 @@ export default function Sabha() {
   };
 
   useEffect(() => {
+    setSabhaList([]);
+    setPage(1);
+    setHasMore(true);
     fetchSabhaListData();
-  }, []);
+  }, [activeTab]);
 
   return (
     <LayoutWrapper
@@ -66,7 +73,8 @@ export default function Sabha() {
       }}
     >
       <Tabs
-        defaultValue="upcoming-sabha"
+        value={activeTab}
+        onValueChange={(val) => setActiveTab(val as SabhaTabs)}
         className="w-full h-full flex flex-col justify-start"
       >
         <TabsList className="w-full bg-primaryColor rounded-none justify-evenly h-10 pb-2">
@@ -74,31 +82,23 @@ export default function Sabha() {
           <TabsTrigger value="completed-sabha">Completed Sabha</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming-sabha" className="p-4 h-full w-full">
-          {loading && sabhaList.length === 0 ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <p>Loading...</p>
-            </div>
-          ) : (
-            <Virtuoso
-              totalCount={totalSabha}
-              endReached={handleEndReached}
-              itemContent={(index) => {
-                const sabha = sabhaList[index];
-                return (
-                  <div key={sabha?.id} className="w-full mb-4">
-                    <EventCard sabha={sabha} />
-                  </div>
-                );
-              }}
-              components={{
-                Footer: () => {
-                  return loading ? (
-                    <div className="">loading more...</div>
-                  ) : null;
-                },
-              }}
-            />
-          )}
+          <Virtuoso
+            totalCount={totalSabha}
+            endReached={handleEndReached}
+            itemContent={(index) => {
+              const sabha = sabhaList[index];
+              return (
+                <div key={sabha?.id} className="w-full mb-4">
+                  <EventCard sabha={sabha} />
+                </div>
+              );
+            }}
+            components={{
+              Footer: () => {
+                return loading ? <div className="">loading more...</div> : null;
+              },
+            }}
+          />
         </TabsContent>
         <TabsContent value="completed-sabha" className="p-4">
           <div className="w-full grid grid-cols-1 gap-4">
