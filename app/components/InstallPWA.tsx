@@ -6,7 +6,6 @@ import { isPWAInstalled } from "../utils/pwa";
 export const InstallPWA = () => {
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
     // Check if PWA is already installed
@@ -24,7 +23,6 @@ export const InstallPWA = () => {
       e.preventDefault();
       setDeferredPrompt(e);
       setShowInstallPrompt(true);
-      setShowFallback(false);
     };
 
     // Listen for appinstalled event
@@ -32,22 +30,14 @@ export const InstallPWA = () => {
       console.log("PWA was installed");
       setShowInstallPrompt(false);
       setDeferredPrompt(null);
-      setShowFallback(false);
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     window.addEventListener("appinstalled", handleAppInstalled);
 
-    // Show fallback after 3 seconds if beforeinstallprompt hasn't fired
-    const fallbackTimer = setTimeout(() => {
-      console.log("beforeinstallprompt event not fired, showing fallback");
-      setShowFallback(true);
-    }, 3000);
-
     console.log("InstallPWA component mounted, listening for install event");
 
     return () => {
-      clearTimeout(fallbackTimer);
       window.removeEventListener(
         "beforeinstallprompt",
         handleBeforeInstallPrompt
@@ -58,7 +48,6 @@ export const InstallPWA = () => {
 
   const handleDismiss = () => {
     setShowInstallPrompt(false);
-    setShowFallback(false);
   };
 
   const handleInstallClick = async () => {
@@ -75,18 +64,9 @@ export const InstallPWA = () => {
     }
   };
 
-  const handleFallbackInstall = () => {
-    // For fallback: show instructions for manual installation
-    alert(
-      "To install this app:\n\n1. Click the menu (⋮) or settings icon in your browser\n2. Select 'Install app' or 'Add to Home Screen'\n3. Follow the prompts to complete installation"
-    );
-  };
-
-  if (!showInstallPrompt && !showFallback) {
+  if (!showInstallPrompt) {
     return null;
   }
-
-  const isFallback = showFallback && !deferredPrompt;
 
   return (
     <div className="fixed bottom-24 left-3 right-3 z-50 bg-primaryColor rounded-lg shadow-lg p-4 animate-in slide-in-from-bottom-2 md:bottom-4">
@@ -96,19 +76,17 @@ export const InstallPWA = () => {
             Install Bhajanbaug Sabha App
           </h3>
           <p className="text-xs text-textLightColor font-normal">
-            {isFallback
-              ? "Use your browser menu to install"
-              : "Add to home screen for quick access"}
+            Add to home screen for quick access
           </p>
         </div>
         <div className="flex items-center">
           <Button
             variant="default"
-            onClick={isFallback ? handleFallbackInstall : handleInstallClick}
+            onClick={handleInstallClick}
             size="sm"
             className="bg-white hover:bg-white text-textColor"
           >
-            {isFallback ? "Help" : "Install"}
+            Install
           </Button>
           <Button
             onClick={handleDismiss}
