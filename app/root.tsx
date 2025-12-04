@@ -61,7 +61,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  useLayoutEffect(() => {
+  useEffect(() => {
     registerServiceWorker();
     installPWA();
   }, []);
