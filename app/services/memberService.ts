@@ -1,24 +1,16 @@
 import axiosInstance from "~/interceptor/interceptor";
 import { API_ENDPOINTS } from "~/lib/api-endpoints";
+import type { CommonParams } from "~/types/common.interface";
 import type { MemberPayload } from "~/types/members.interface";
 
 export const memberService = {
   //#region get members
-  getMembers: async ({
-    pageIndex,
-    pageSize,
-    searchText,
-  }: {
-    pageIndex: number;
-    pageSize: number;
-    searchText?: string;
-  }) => {
+  getMembers: async (params: CommonParams) => {
     try {
       const response = await axiosInstance(API_ENDPOINTS.MEMBERS.BASE, {
         params: {
-          page: pageIndex,
-          size: pageSize,
-          search: searchText,
+          page: params.page,
+          limit: params.limit,
         },
       });
       return response.data;

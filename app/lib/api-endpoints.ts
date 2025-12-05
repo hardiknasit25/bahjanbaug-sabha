@@ -1,6 +1,6 @@
 export const API_ENDPOINTS = {
   MEMBERS: {
-    BASE: "members",
+    BASE: "user",
     CREATE: "create",
     UPDATE_STATUS: "update-status",
   },

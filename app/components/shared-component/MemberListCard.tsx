@@ -3,6 +3,7 @@ import type { MemberData } from "~/types/members.interface";
 import ImageComponent from "./ImageComponent";
 import { useNavigate } from "react-router";
 import { cn } from "~/lib/utils";
+import { Separator } from "../ui/separator";
 
 function MemberListCard({
   member,
@@ -19,7 +20,7 @@ function MemberListCard({
   return (
     <div
       className={cn(
-        "flex justify-center gap-2 border border-borderColor/20 p-2 transition-all",
+        "relative flex justify-center gap-2 p-2 pl-4 transition-all",
         from === "members" ? "items-center" : "items-start"
       )}
       onClick={() => {
@@ -107,6 +108,10 @@ function MemberListCard({
           </div>
         )}
       </div>
+      <Separator
+        orientation="vertical"
+        className="absolute bg-borderColor/30 w-[95%] h-[1px] bottom-0 left-1/2 right-1/2 translate-x-[-50%]"
+      />
     </div>
   );
 }

@@ -101,7 +101,7 @@ function Header({
               type="text"
               value={searchValue}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full bg-transparent placeholder:text-textLightColor text-textColor outline-none"
+              className="w-full bg-transparent placeholder:text-textLightColor text-textColor text-sm outline-none"
               placeholder={searchPlaceholder || "Search member..."}
             />
             {searchValue && (

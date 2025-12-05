@@ -1,5 +1,5 @@
 import { CirclePlus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, type MetaArgs } from "react-router";
 import { Virtuoso } from "react-virtuoso";
 import { ClientOnly } from "~/components/shared-component/ClientOnly";
@@ -21,8 +21,58 @@ type MemberTabs = "all-members" | "by-group";
 
 export default function Members() {
   const [activeTab, setActiveTab] = useState<MemberTabs>("all-members");
-  const { members, loading, error } = useMembers();
-  const [searchText, setSearchText] = useState("");
+  const {
+    filteredMembers,
+    totalMembers,
+    searchText,
+    fetchMembers,
+    setSearchText,
+  } = useMembers();
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchMembersListData = async (pageNum: number = page) => {
+    const data = await fetchMembers({
+      page: pageNum,
+      limit: 1000,
+    }).unwrap();
+    return data.rows;
+  };
+
+  const handleEndReached = async () => {
+    if (loading || !hasMore || filteredMembers.length >= totalMembers) return;
+    setLoading(true);
+
+    const nextPage = page + 1;
+    try {
+      const data = await fetchMembersListData(nextPage);
+      if (data && data.length > 0) {
+        setPage(nextPage);
+        if (filteredMembers.length + data.length >= totalMembers) {
+          setHasMore(false);
+        }
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Error fetching more sabha:", error);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setPage(1);
+    setHasMore(true);
+    fetchMembersListData();
+  }, [activeTab]);
+
+  // Handle search input change
+  const handleSearchChange = (value: string) => {
+    setSearchText(value); // Update Redux state for filtering
+  };
 
   return (
     <LayoutWrapper
@@ -34,14 +84,11 @@ export default function Members() {
           </Link>
         ),
         className: "flex-col gap-2",
-        description: `Total ${members.length} Members`,
+        description: `Total ${filteredMembers.length} Members`,
         showSearch: true,
         searchPlaceholder: "Search Members...",
         searchValue: searchText,
-        onSearchChange: (value: string) => {
-          setSearchText(value);
-          console.log("Search value changed:", value);
-        },
+        onSearchChange: handleSearchChange,
         showSorting: activeTab === "all-members",
       }}
     >
@@ -56,9 +103,10 @@ export default function Members() {
         </TabsList>
         <TabsContent value="all-members" className="h-full w-full">
           <Virtuoso
-            totalCount={members.length}
+            totalCount={filteredMembers.length}
+            endReached={handleEndReached}
             itemContent={(index) => {
-              const member = members[index];
+              const member = filteredMembers[index];
               return (
                 <MemberListCard
                   key={member.smk_no}
@@ -68,13 +116,14 @@ export default function Members() {
               );
             }}
             components={{
-              Footer: () => (
-                <div className="">
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <MemberSkeleton key={index} />
-                  ))}
-                </div>
-              ),
+              Footer: () => {
+                return loading ? null : filteredMembers.length >=
+                  totalMembers ? null : filteredMembers.length === 0 ? (
+                  <div className="text-center mt-2 text-textLightColor">
+                    No members found
+                  </div>
+                ) : null;
+              },
             }}
           />
         </TabsContent>
