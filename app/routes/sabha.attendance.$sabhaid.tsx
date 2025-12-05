@@ -1,12 +1,20 @@
-import { CirclePlus, EllipsisVertical, RotateCcw } from "lucide-react";
-import { useState } from "react";
-import { Link, type MetaArgs } from "react-router";
+import { EllipsisVertical, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Link,
+  useLoaderData,
+  type LoaderFunction,
+  type MetaArgs,
+} from "react-router";
 import { Virtuoso } from "react-virtuoso";
 import { ClientOnly } from "~/components/shared-component/ClientOnly";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
+import LoadingSpinner from "~/components/shared-component/LoadingSpinner";
 import MemberListCard from "~/components/shared-component/MemberListCard";
 import MemberSkeleton from "~/components/skeleton/MemberSkeleton";
 import { useMembers } from "~/hooks/useMembers";
+import { useSabha } from "~/hooks/useSabha";
+import { filterMembers } from "~/utils/filterMembers";
 
 export function meta({}: MetaArgs) {
   return [
@@ -15,9 +23,36 @@ export function meta({}: MetaArgs) {
   ];
 }
 
+export const loader: LoaderFunction = async ({ params }) => {
+  const { sabhaid } = params;
+
+  return {
+    sabhaId: sabhaid,
+  };
+};
+
 export default function EventAttendance() {
-  const { members, loading, error } = useMembers();
-  const [searchText, setSearchText] = useState("");
+  const { sabhaId } = useLoaderData();
+  const {
+    loading,
+    sabhaMembers,
+    filteredSabhaMembers,
+    searchText,
+    totalPresentOnSelectedSabha,
+    fetchSabhaById,
+    setSabhaMemberSearchText,
+  } = useSabha();
+
+  useEffect(() => {
+    fetchSabhaById(Number(sabhaId), {
+      page: 1,
+      limit: 2000,
+    });
+  }, [sabhaId]);
+
+  const handleSearchChange = (value: string) => {
+    setSabhaMemberSearchText(value); // Update Redux state for filtering
+  };
 
   return (
     <LayoutWrapper
@@ -34,20 +69,17 @@ export default function EventAttendance() {
           </div>
         ),
         className: "flex-col gap-2",
-        description: `Total ${members.length} Members`,
+        description: `Total ${filteredSabhaMembers.length} Members`,
         showSearch: true,
         searchPlaceholder: "Search Members...",
         searchValue: searchText,
-        onSearchChange: (value: string) => {
-          setSearchText(value);
-          console.log("Search value changed:", value);
-        },
+        onSearchChange: handleSearchChange,
       }}
     >
       <div className="flex justify-around items-center p-2 shadow-sm">
         <div className="flex flex-col justify-center items-center">
           <span className="text-3xl text-green-500 font-medium font-poppins">
-            137
+            {totalPresentOnSelectedSabha}
           </span>
           <span className="text-base text-textColor font-medium font-poppins">
             Pesent
@@ -55,45 +87,42 @@ export default function EventAttendance() {
         </div>
         <div className="flex flex-col justify-center items-center gap-1">
           <span className="text-3xl text-red-500 font-medium font-poppins">
-            10
+            {sabhaMembers?.length - totalPresentOnSelectedSabha}
           </span>
           <span className="text-base text-textColor font-medium font-poppins">
             Absent
           </span>
         </div>
       </div>
-      <ClientOnly
-        fallback={
-          <div className="">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <MemberSkeleton key={index} />
-            ))}
-          </div>
-        }
-      >
+      {loading && sabhaMembers.length === 0 ? (
+        <LoadingSpinner />
+      ) : (
         <Virtuoso
-          totalCount={members.length}
+          totalCount={filteredSabhaMembers.length}
           itemContent={(index) => {
-            const member = members[index];
+            const member = filteredSabhaMembers[index];
             return (
               <MemberListCard
                 key={member.smk_no}
                 member={member}
                 from={"attendance"}
+                selectedSabha={sabhaId}
               />
             );
           }}
           components={{
             Footer: () => (
-              <div className="">
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <MemberSkeleton key={index} />
-                ))}
-              </div>
+              <>
+                {sabhaMembers?.length === 0 && (
+                  <div className="text-center text-textLightColor mt-2">
+                    No members found
+                  </div>
+                )}
+              </>
             ),
           }}
         />
-      </ClientOnly>
+      )}
     </LayoutWrapper>
   );
 }

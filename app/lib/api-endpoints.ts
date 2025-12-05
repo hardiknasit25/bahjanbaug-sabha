@@ -11,5 +11,7 @@ export const API_ENDPOINTS = {
     BASE: "sabha",
     CREATE_EVENT: "create-event",
     UPDATE_EVENT: "update-event",
+    ATTENDANCE_PRESENT: "attendance/present",
+    ATTENDANCE_ABSENT: "attendance/absent",
   },
 };

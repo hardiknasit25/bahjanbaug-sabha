@@ -1,7 +1,7 @@
 export interface MemberData {
   id: number;
   first_name: string;
-  middle_name?: string;
+  middle_name: string;
   last_name: string;
   img: string;
   email?: string;
@@ -22,6 +22,8 @@ export interface MemberData {
   seva?: string;
   parichit_bhakt_name?: string;
   group_id?: number[];
+  attendance_id?: number;
+  is_present?: boolean;
 }
 
 export interface PoshakGroupData {

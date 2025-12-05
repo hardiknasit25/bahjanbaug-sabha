@@ -5,10 +5,18 @@ import {
 } from "@reduxjs/toolkit";
 import { sabhaService } from "~/services/sabhaService";
 import type { CommonParams } from "~/types/common.interface";
+import type { MemberData } from "~/types/members.interface";
 import type { SabhaData } from "~/types/sabha.interface";
+import { filterMembers } from "~/utils/filterMembers";
+import { setSearchText } from "./memberSlice";
 
 interface SabhaState {
   sabhaList: SabhaData[];
+  sabhaMembers: MemberData[];
+  selectedSabha: SabhaData | null;
+  totalPresentOnSelectedSabha: number;
+  totalAbsentOnSelectedSabha: number;
+  searchText: string;
   totalSabha: number;
   loading: boolean;
   error: string | null;
@@ -16,6 +24,11 @@ interface SabhaState {
 
 const initialState: SabhaState = {
   sabhaList: [],
+  sabhaMembers: [],
+  selectedSabha: null,
+  totalPresentOnSelectedSabha: 0,
+  totalAbsentOnSelectedSabha: 0,
+  searchText: "",
   totalSabha: 0,
   loading: false,
   error: null,
@@ -35,6 +48,58 @@ export const fetchSabhaList = createAsyncThunk(
   }
 );
 
+//#regin fetch sabha by id
+export const fetchSabhaById = createAsyncThunk(
+  "sabha/fetchSabhaById",
+  async (
+    { sabhaId, params }: { sabhaId: number; params: CommonParams },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await sabhaService.getSabhaById(sabhaId, params);
+      return response.data as {
+        sabha: SabhaData;
+        total_present: number;
+        users: MemberData[];
+      };
+    } catch (error) {
+      return rejectWithValue("Failed to fetch sabha details");
+    }
+  }
+);
+
+//#region present attendance
+export const presetAttendance = createAsyncThunk(
+  "sabha/presetAttendance",
+  async (
+    { sabhaId, userId }: { sabhaId: number; userId: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await sabhaService.presetAttendance(sabhaId, userId);
+      return { data: response.data, userId };
+    } catch (error) {
+      return rejectWithValue("Failed to preset attendance");
+    }
+  }
+);
+
+//#region absent attendance
+export const absentAttendance = createAsyncThunk(
+  "sabha/absentAttendance",
+  async (
+    { sabhaId, userId }: { sabhaId: number; userId: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await sabhaService.absentAttendance(sabhaId, userId);
+      return { data: response.data, userId };
+    } catch (error) {
+      return rejectWithValue("Failed to mark absent attendance");
+    }
+  }
+);
+
 // #region sabha slice
 const sabhaSlice = createSlice({
   name: "sabha",
@@ -45,6 +110,9 @@ const sabhaSlice = createSlice({
     },
     setLoading(state, action: PayloadAction<boolean>) {
       state.loading = action.payload;
+    },
+    setSabhaMemberSearchText(state, action: PayloadAction<string>) {
+      state.searchText = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -69,8 +137,92 @@ const sabhaSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
+
+    //#region fetch sabha by id
+    builder
+      .addCase(fetchSabhaById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchSabhaById.fulfilled,
+        (
+          state,
+          action: PayloadAction<{
+            sabha: SabhaData;
+            total_present: number;
+            users: MemberData[];
+          }>
+        ) => {
+          state.selectedSabha = action.payload.sabha;
+          state.totalPresentOnSelectedSabha = action.payload.total_present;
+          state.totalAbsentOnSelectedSabha =
+            action?.payload?.users.length - action?.payload?.total_present || 0;
+          state.sabhaMembers = action.payload.users;
+          state.loading = false;
+        }
+      )
+      .addCase(fetchSabhaById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    //#region preset attendance
+    builder
+      .addCase(presetAttendance.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(presetAttendance.fulfilled, (state, action) => {
+        const index = state.sabhaMembers.findIndex(
+          (m) => m.id === action.payload.userId
+        );
+
+        if (index !== -1 && !state.sabhaMembers[index].is_present) {
+          state.sabhaMembers[index].is_present = true;
+          state.totalPresentOnSelectedSabha += 1;
+          state.totalAbsentOnSelectedSabha -= 1;
+        }
+
+        state.loading = false;
+      })
+      .addCase(presetAttendance.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    //#region absent attendance
+    builder
+      .addCase(absentAttendance.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(absentAttendance.fulfilled, (state, action) => {
+        const index = state.sabhaMembers.findIndex(
+          (m) => m.id === action.payload.userId
+        );
+
+        if (index !== -1 && state.sabhaMembers[index].is_present) {
+          state.sabhaMembers[index].is_present = false;
+          state.totalPresentOnSelectedSabha -= 1;
+          state.totalAbsentOnSelectedSabha += 1;
+        }
+
+        state.loading = false;
+      })
+      .addCase(absentAttendance.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { setSabhaList, setLoading } = sabhaSlice.actions;
+export const { setSabhaList, setLoading, setSabhaMemberSearchText } =
+  sabhaSlice.actions;
+
+export const selectFilteredSabhaMembers = (state: { sabha: SabhaState }) => {
+  const { sabhaMembers, searchText } = state.sabha;
+  return filterMembers(sabhaMembers, searchText);
+};
+
 export default sabhaSlice.reducer;

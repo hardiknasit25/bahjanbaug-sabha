@@ -19,4 +19,54 @@ export const sabhaService = {
       throw error;
     }
   },
+
+  //#region fetch sabha by id
+  getSabhaById: async (sabhaId: number, params: CommonParams) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.SABHA.BASE}/${sabhaId}`,
+        {
+          params: {
+            page: params.page,
+            limit: params.limit,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  //#region preset attendance for userId by sabhaId
+  presetAttendance: async (sabhaId: number, userId: number) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_ENDPOINTS.SABHA.ATTENDANCE_PRESENT}`,
+        {
+          sabha_id: sabhaId,
+          user_id: userId,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  //#region absent attendance for userId by sabhaId
+  absentAttendance: async (sabhaId: number, userId: number) => {
+    try {
+      const response = await axiosInstance.post(
+        `${API_ENDPOINTS.SABHA.ATTENDANCE_ABSENT}`,
+        {
+          sabha_id: sabhaId,
+          user_id: userId,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

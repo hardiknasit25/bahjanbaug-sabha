@@ -4,17 +4,37 @@ import ImageComponent from "./ImageComponent";
 import { useNavigate } from "react-router";
 import { cn } from "~/lib/utils";
 import { Separator } from "../ui/separator";
+import { useSabha } from "~/hooks/useSabha";
 
 function MemberListCard({
   member,
   from,
+  selectedSabha,
 }: {
   member: MemberData;
   from: "attendance" | "members" | "report";
+  selectedSabha?: number;
 }) {
+  const { presetAttendance, absentAttendance } = useSabha();
   const navigate = useNavigate();
+
   const handleStatusAction = (status: string) => {
-    console.log(`Member ${member.first_name} marked as ${status}`);
+    if (status === "present") {
+      // already present → no need to call API again
+      if (member.is_present) return;
+
+      // mark present
+      presetAttendance(Number(selectedSabha), member.id);
+      return;
+    }
+
+    if (status === "absent") {
+      // already absent → no need to call API again
+      if (!member.is_present) return;
+
+      // mark absent
+      absentAttendance(Number(selectedSabha), member.id);
+    }
   };
 
   return (
@@ -30,12 +50,14 @@ function MemberListCard({
       }}
     >
       {/* Avatar Section */}
-      <div className="shrink-0">
+      <div className="shrink-0 flex justify-center items-center">
         <ImageComponent src={member.img} alt={member.first_name} />
       </div>
 
       {/* Content Section */}
-      <div className={cn("flex flex-1 flex-col justify-between items-start")}>
+      <div
+        className={cn("flex flex-1 flex-col justify-between items-start gap-1")}
+      >
         {/* Name */}
         <h3 className="text-sm font-semibold text-textColor capitalize">{`${member.first_name} ${member.middle_name} ${member.last_name}`}</h3>
 
@@ -47,42 +69,42 @@ function MemberListCard({
 
         {/* Status Icons Row */}
         {from === "attendance" && (
-          <div className="w-full flex justify-start items-center gap-8">
+          <div className="w-full flex justify-start items-center gap-12 mt-0.5 pl-4">
             {/* 1. Present / Green Check */}
             <button
               onClick={() => handleStatusAction("present")}
-              className="flex items-center justify-center rounded-full transition-transform active:scale-95 p-2"
+              className={cn(
+                "flex items-center justify-center rounded-full transition-transform p-1",
+                member.is_present && "bg-greenTextColor"
+              )}
               aria-label="Mark Present"
             >
-              <Check size={24} className="text-green-400" />
+              <Check
+                size={24}
+                className={cn(
+                  "text-greenTextColor",
+                  member?.is_present && "text-white"
+                )}
+              />
               <span className="sr-only">Present</span>
             </button>
 
-            {/* 2. Late / Warning */}
-            <button
-              onClick={() => handleStatusAction("late")}
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-transform hover:scale-110"
-              aria-label="Mark Late"
-            >
-              <span className="text-2xl font-bold text-amber-400">!</span>
-            </button>
-
-            {/* 3. Absent / Red Cross */}
+            {/* 2. Absent / Red Cross */}
             <button
               onClick={() => handleStatusAction("absent")}
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-transform hover:scale-110"
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-full transition-transform",
+                !member?.is_present && "bg-red-500"
+              )}
               aria-label="Mark Absent"
             >
-              <X size={28} className="text-rose-500" />
-            </button>
-
-            {/* 4. Other / Grey Check */}
-            <button
-              onClick={() => handleStatusAction("excused")}
-              className="flex h-8 w-8 items-center justify-center rounded-full transition-transform hover:scale-110"
-              aria-label="Mark Excused"
-            >
-              <Check size={28} className="text-gray-300" />
+              <X
+                size={24}
+                className={cn(
+                  "text-redTextColor",
+                  !member?.is_present && "text-white"
+                )}
+              />
             </button>
           </div>
         )}
