@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { Virtuoso } from "react-virtuoso";
 import EventCard from "~/components/shared-component/EventCard";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
+import LoadingSpinner from "~/components/shared-component/LoadingSpinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useSabha } from "~/hooks/useSabha";
 
@@ -25,7 +26,7 @@ export default function Sabha() {
   const fetchSabhaListData = async (pageNum: number = page) => {
     const data = await fetchSabhaList({
       page: pageNum,
-      limit: 10,
+      limit: 1000,
       sabah_status: activeTab === "upcoming-sabha" ? "upcoming" : "completed",
     }).unwrap();
     return data.rows;
@@ -82,30 +83,66 @@ export default function Sabha() {
           <TabsTrigger value="completed-sabha">Completed Sabha</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming-sabha" className="p-4 h-full w-full">
-          <Virtuoso
-            totalCount={totalSabha}
-            endReached={handleEndReached}
-            itemContent={(index) => {
-              const sabha = sabhaList[index];
-              return (
-                <div key={sabha?.id} className="w-full mb-4">
-                  <EventCard sabha={sabha} />
-                </div>
-              );
-            }}
-            components={{
-              Footer: () => {
-                return loading ? <div className="">loading more...</div> : null;
-              },
-            }}
-          />
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <Virtuoso
+              totalCount={totalSabha}
+              endReached={handleEndReached}
+              itemContent={(index) => {
+                const sabha = sabhaList[index];
+                return (
+                  <div key={sabha?.id} className="w-full mb-4">
+                    <EventCard sabha={sabha} />
+                  </div>
+                );
+              }}
+              components={{
+                Footer: () => {
+                  return loading ? null : sabhaList.length >= totalSabha ? (
+                    <div className="text-center text-textLightColor">
+                      No more sabha
+                    </div>
+                  ) : sabhaList.length === 0 ? (
+                    <div>No sabha found</div>
+                  ) : (
+                    <div className="mt-10">No sabha found</div>
+                  );
+                },
+              }}
+            />
+          )}
         </TabsContent>
-        <TabsContent value="completed-sabha" className="p-4">
-          <div className="w-full grid grid-cols-1 gap-4">
-            {sabhaList?.map((sabha) => (
-              <EventCard key={sabha.id} sabha={sabha} />
-            ))}
-          </div>
+        <TabsContent value="completed-sabha" className="p-4 w-full h-full">
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <Virtuoso
+              totalCount={totalSabha}
+              endReached={handleEndReached}
+              itemContent={(index) => {
+                const sabha = sabhaList[index];
+                return (
+                  <div key={sabha?.id} className="w-full mb-4">
+                    <EventCard sabha={sabha} />
+                  </div>
+                );
+              }}
+              components={{
+                Footer: () => {
+                  return loading ? null : sabhaList.length >= totalSabha ? (
+                    <div className="text-center text-textLightColor">
+                      No more sabha
+                    </div>
+                  ) : sabhaList.length === 0 ? (
+                    <div>No sabha found</div>
+                  ) : (
+                    <div className="mt-10">No sabha found</div>
+                  );
+                },
+              }}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </LayoutWrapper>
