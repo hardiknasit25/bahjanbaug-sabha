@@ -43,4 +43,22 @@ export const memberService = {
       throw error;
     }
   },
+
+  //#region fetch members by group
+  getPoshakGroup: async (params: CommonParams) => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.MEMBERS.POSHAK_GROUP}`,
+        {
+          params: {
+            page: params.page,
+            limit: params.limit,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

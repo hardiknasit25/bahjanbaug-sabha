@@ -3,6 +3,8 @@ export const API_ENDPOINTS = {
     BASE: "user",
     CREATE: "create",
     UPDATE_STATUS: "update-status",
+
+    POSHAK_GROUP: "poshak-group",
   },
 
   SABHA: {

@@ -24,6 +24,14 @@ export interface MemberData {
   group_id?: number[];
 }
 
+export interface PoshakGroupData {
+  id: number;
+  poshak_leader_id: number;
+  group_type: string;
+  group_name: string;
+  status: boolean;
+}
+
 export interface MemberPayload {
   first_name: string;
   middle_name?: string;

@@ -5,6 +5,7 @@ import { Virtuoso } from "react-virtuoso";
 import { ClientOnly } from "~/components/shared-component/ClientOnly";
 import GroupAccordionMember from "~/components/shared-component/GroupAccordionMember";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
+import LoadingSpinner from "~/components/shared-component/LoadingSpinner";
 import MemberListCard from "~/components/shared-component/MemberListCard";
 import MemberSkeleton from "~/components/skeleton/MemberSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -24,6 +25,7 @@ export default function Members() {
   const {
     filteredMembers,
     totalMembers,
+    loading: memberLoading,
     searchText,
     fetchMembers,
     setSearchText,
@@ -32,6 +34,7 @@ export default function Members() {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
+  //#region fetch member data
   const fetchMembersListData = async (pageNum: number = page) => {
     const data = await fetchMembers({
       page: pageNum,
@@ -102,30 +105,34 @@ export default function Members() {
           <TabsTrigger value="by-group">Poshak Groups</TabsTrigger>
         </TabsList>
         <TabsContent value="all-members" className="h-full w-full">
-          <Virtuoso
-            totalCount={filteredMembers.length}
-            endReached={handleEndReached}
-            itemContent={(index) => {
-              const member = filteredMembers[index];
-              return (
-                <MemberListCard
-                  key={member.smk_no}
-                  member={member}
-                  from={"members"}
-                />
-              );
-            }}
-            components={{
-              Footer: () => {
-                return loading ? null : filteredMembers.length >=
-                  totalMembers ? null : filteredMembers.length === 0 ? (
-                  <div className="text-center mt-2 text-textLightColor">
-                    No members found
-                  </div>
-                ) : null;
-              },
-            }}
-          />
+          {memberLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <Virtuoso
+              totalCount={filteredMembers.length}
+              endReached={handleEndReached}
+              itemContent={(index) => {
+                const member = filteredMembers[index];
+                return (
+                  <MemberListCard
+                    key={member.smk_no}
+                    member={member}
+                    from={"members"}
+                  />
+                );
+              }}
+              components={{
+                Footer: () => {
+                  return loading ? null : filteredMembers.length >=
+                    totalMembers ? null : filteredMembers.length === 0 ? (
+                    <div className="text-center mt-2 text-textLightColor">
+                      No members found
+                    </div>
+                  ) : null;
+                },
+              }}
+            />
+          )}
         </TabsContent>
         <TabsContent value="by-group" className="h-full w-full">
           <GroupAccordionMember />

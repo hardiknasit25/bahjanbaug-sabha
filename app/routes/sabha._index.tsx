@@ -99,15 +99,10 @@ export default function Sabha() {
               }}
               components={{
                 Footer: () => {
-                  return loading ? null : sabhaList.length >= totalSabha ? (
-                    <div className="text-center text-textLightColor">
-                      No more sabha
-                    </div>
-                  ) : sabhaList.length === 0 ? (
+                  return loading ? null : sabhaList.length >=
+                    totalSabha ? null : sabhaList.length === 0 ? (
                     <div>No sabha found</div>
-                  ) : (
-                    <div className="mt-10">No sabha found</div>
-                  );
+                  ) : null;
                 },
               }}
             />

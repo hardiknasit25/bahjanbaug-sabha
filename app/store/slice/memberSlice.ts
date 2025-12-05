@@ -50,6 +50,19 @@ export const createMember = createAsyncThunk(
   }
 );
 
+//#reion fetch poshak groups
+export const fetchPoshakGroups = createAsyncThunk(
+  "members/fetchPoshakGroups",
+  async (params: CommonParams, { rejectWithValue }) => {
+    try {
+      const response = await memberService.getPoshakGroup(params);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 //#region member slice
 
 const memberSlice = createSlice({
