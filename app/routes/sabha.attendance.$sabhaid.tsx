@@ -1,20 +1,23 @@
-import { EllipsisVertical, RotateCcw } from "lucide-react";
+import { RotateCcw, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
-  Link,
   useLoaderData,
   type LoaderFunction,
   type MetaArgs,
 } from "react-router";
 import { Virtuoso } from "react-virtuoso";
-import { ClientOnly } from "~/components/shared-component/ClientOnly";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 import LoadingSpinner from "~/components/shared-component/LoadingSpinner";
 import MemberListCard from "~/components/shared-component/MemberListCard";
-import MemberSkeleton from "~/components/skeleton/MemberSkeleton";
-import { useMembers } from "~/hooks/useMembers";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 import { useSabha } from "~/hooks/useSabha";
-import { filterMembers } from "~/utils/filterMembers";
 
 export function meta({}: MetaArgs) {
   return [
@@ -24,15 +27,27 @@ export function meta({}: MetaArgs) {
 }
 
 export const loader: LoaderFunction = async ({ params }) => {
-  const { sabhaid } = params;
-
   return {
-    sabhaId: sabhaid,
+    sabhaId: params.sabhaid,
   };
 };
 
+type DialogButton = {
+  label: string;
+  variant?: "default" | "outline";
+  action: () => void | Promise<void>;
+};
+
+type DialogState = {
+  open: boolean;
+  title: string;
+  message: string;
+  buttons: DialogButton[];
+};
+
 export default function EventAttendance() {
-  const { sabhaId } = useLoaderData();
+  const { sabhaId } = useLoaderData() as { sabhaId: string };
+
   const {
     loading,
     selectedSabha,
@@ -43,18 +58,81 @@ export default function EventAttendance() {
     totalAbsentOnSelectedSabha,
     fetchSabhaById,
     setSabhaMemberSearchText,
+    submitSabhaReport,
   } = useSabha();
 
-  useEffect(() => {
-    fetchSabhaById(Number(sabhaId), {
-      page: 1,
-      limit: 2000,
-    });
-  }, [sabhaId]);
+  const [dialog, setDialog] = useState<DialogState>({
+    open: false,
+    title: "",
+    message: "",
+    buttons: [],
+  });
 
-  const handleSearchChange = (value: string) => {
-    setSabhaMemberSearchText(value); // Update Redux state for filtering
+  const fetchSabhaMembers = () => {
+    fetchSabhaById(Number(sabhaId), { page: 1, limit: 2000 });
   };
+
+  const openDialog = (
+    title: string,
+    message: string,
+    buttons: DialogButton[]
+  ) => {
+    setDialog({ open: true, title, message, buttons });
+  };
+
+  const handleRefreshSabha = async () => {
+    await fetchSabhaMembers();
+
+    openDialog(
+      "Synced Successfully!",
+      "Your attendance data has been synced successfully.",
+      [
+        {
+          label: "OK",
+          action: () => setDialog((d) => ({ ...d, open: false })),
+        },
+      ]
+    );
+  };
+
+  const handleSubmitSabha = () => {
+    openDialog(
+      "Submit Attendance?",
+      "Are you sure you want to submit? You can't edit after submission.",
+      [
+        {
+          label: "Cancel",
+          variant: "outline",
+          action: () => setDialog((d) => ({ ...d, open: false })),
+        },
+        {
+          label: "Yes, Submit",
+          action: async () => {
+            setDialog((d) => ({ ...d, open: false }));
+
+            const res = await submitSabhaReport(Number(sabhaId));
+
+            if (res) {
+              openDialog(
+                "Submitted Successfully!",
+                "Attendance submission completed successfully.",
+                [
+                  {
+                    label: "OK",
+                    action: () => setDialog((d) => ({ ...d, open: false })),
+                  },
+                ]
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  useEffect(() => {
+    fetchSabhaMembers();
+  }, [sabhaId]);
 
   return (
     <LayoutWrapper
@@ -64,10 +142,13 @@ export default function EventAttendance() {
         iconName: "ArrowLeft",
         children: (
           <div className="flex justify-end items-center gap-2">
-            <RotateCcw />
-            <Link to="/members/create-member">
-              <EllipsisVertical />
-            </Link>
+            <RotateCcw
+              onClick={handleRefreshSabha}
+              className="cursor-pointer"
+            />
+            {selectedSabha?.status === "running" && (
+              <Send onClick={handleSubmitSabha} className="cursor-pointer" />
+            )}
           </div>
         ),
         className: "flex-col gap-2",
@@ -75,29 +156,33 @@ export default function EventAttendance() {
         showSearch: true,
         searchPlaceholder: "Search Members...",
         searchValue: searchText,
-        onSearchChange: handleSearchChange,
+        onSearchChange: setSabhaMemberSearchText,
       }}
     >
+      {/* Summary Counts */}
       <div className="flex justify-around items-center p-2 shadow-sm">
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center">
           <span className="text-3xl text-green-500 font-medium font-poppins">
             {totalPresentOnSelectedSabha}
           </span>
           <span className="text-base text-textColor font-medium font-poppins">
-            Pesent
+            Present
           </span>
         </div>
-        <div className="flex flex-col justify-center items-center gap-1">
+
+        <div className="flex flex-col items-center">
           <span className="text-3xl text-red-500 font-medium font-poppins">
             {selectedSabha?.status !== "completed"
               ? totalAbsentOnSelectedSabha
-              : sabhaMembers?.length - totalPresentOnSelectedSabha}
+              : sabhaMembers.length - totalPresentOnSelectedSabha}
           </span>
           <span className="text-base text-textColor font-medium font-poppins">
             Absent
           </span>
         </div>
       </div>
+
+      {/* Members List */}
       {loading && sabhaMembers.length === 0 ? (
         <LoadingSpinner />
       ) : (
@@ -109,24 +194,50 @@ export default function EventAttendance() {
               <MemberListCard
                 key={member.smk_no}
                 member={member}
-                from={"attendance"}
+                from="attendance"
                 selectedSabha={selectedSabha}
               />
             );
           }}
           components={{
-            Footer: () => (
-              <>
-                {sabhaMembers?.length === 0 && (
-                  <div className="text-center text-textLightColor mt-2">
-                    No members found
-                  </div>
-                )}
-              </>
-            ),
+            Footer: () =>
+              sabhaMembers.length === 0 ? (
+                <div className="text-center text-textLightColor mt-2">
+                  No members found
+                </div>
+              ) : null,
           }}
         />
       )}
+
+      {/* Universal Dialog */}
+      <Dialog
+        open={dialog.open}
+        onOpenChange={(v) => setDialog((d) => ({ ...d, open: v }))}
+      >
+        <DialogContent className="rounded-none">
+          <DialogHeader>
+            <DialogTitle className="text-textColor font-semibold">
+              {dialog.title}
+            </DialogTitle>
+          </DialogHeader>
+
+          <p className="text-base text-textLightColor">{dialog.message}</p>
+
+          <DialogFooter className="mt-4 flex gap-2">
+            {dialog.buttons.map((btn, index) => (
+              <Button
+                key={index}
+                variant={btn.variant || "default"}
+                className="flex-1"
+                onClick={btn.action}
+              >
+                {btn.label}
+              </Button>
+            ))}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </LayoutWrapper>
   );
 }

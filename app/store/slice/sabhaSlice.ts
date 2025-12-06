@@ -114,6 +114,19 @@ export const startSabha = createAsyncThunk(
   }
 );
 
+//#region submit sabha report
+export const submitSabhaReport = createAsyncThunk(
+  "sabha/submitSabhaReport",
+  async (sabhaId: number, { rejectWithValue }) => {
+    try {
+      const response = await sabhaService.submitSabhaReport(sabhaId);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to submit sabha report");
+    }
+  }
+);
+
 // #region sabha slice
 const sabhaSlice = createSlice({
   name: "sabha",
@@ -249,6 +262,23 @@ const sabhaSlice = createSlice({
         state.loading = false;
       })
       .addCase(startSabha.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    //#region submit sabha report
+    builder
+      .addCase(submitSabhaReport.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(submitSabhaReport.fulfilled, (state, action) => {
+        if (state.selectedSabha) {
+          state.selectedSabha.status = "completed";
+        }
+        state.loading = false;
+      })
+      .addCase(submitSabhaReport.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

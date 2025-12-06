@@ -9,6 +9,7 @@ import {
   setSabhaList,
   setSabhaMemberSearchText,
   startSabha,
+  submitSabhaReport,
 } from "~/store/slice/sabhaSlice";
 import type { CommonParams } from "~/types/common.interface";
 import type { SabhaData } from "~/types/sabha.interface";
@@ -34,6 +35,8 @@ export const useSabha = () => {
     absentAttendance: (sabhaId: number, userId: number) =>
       dispatch(absentAttendance({ sabhaId, userId })),
     startSabha: (sabhaId: number) => dispatch(startSabha(sabhaId)),
+    submitSabhaReport: (sabhaId: number) =>
+      dispatch(submitSabhaReport(sabhaId)),
   };
 
   return {

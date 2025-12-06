@@ -31,7 +31,7 @@ function MemberListCard({
 
     if (status === "absent") {
       // already absent → no need to call API again
-      if (!member.is_present) return;
+      if (member.is_present === false) return;
 
       // mark absent
       absentAttendance(Number(selectedSabha?.id), member.id);
@@ -95,7 +95,10 @@ function MemberListCard({
               onClick={() => handleStatusAction("absent")}
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-full transition-transform",
-                member?.is_present === false && "bg-red-500"
+                (member?.is_present === false ||
+                  (selectedSabha?.status === "completed" &&
+                    !member?.is_present)) &&
+                  "bg-red-500"
               )}
               aria-label="Mark Absent"
             >
@@ -103,7 +106,10 @@ function MemberListCard({
                 size={24}
                 className={cn(
                   "text-redTextColor",
-                  member?.is_present === false && "text-white"
+                  (member?.is_present === false ||
+                    (selectedSabha?.status === "completed" &&
+                      !member?.is_present)) &&
+                    "text-white"
                 )}
               />
             </button>

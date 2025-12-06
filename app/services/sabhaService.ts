@@ -85,4 +85,16 @@ export const sabhaService = {
       throw error;
     }
   },
+
+  //#region complete sabha by id
+  submitSabhaReport: async (sabhaId: number) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.SABHA.SUBMIT_SABHA_REPORT}/${sabhaId}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
