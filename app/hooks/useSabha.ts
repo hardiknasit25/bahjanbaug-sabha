@@ -1,8 +1,11 @@
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import {
   absentAttendance,
+  closeSabhaFormDailog,
+  createSabha,
   fetchSabhaById,
   fetchSabhaList,
+  openSabhaFormDialog,
   presetAttendance,
   selectFilteredSabhaMembers,
   setLoading,
@@ -24,6 +27,9 @@ export const useSabha = () => {
     setLoading: (loading: boolean) => dispatch(setLoading(loading)),
     setSabhaMemberSearchText: (searchText: string) =>
       dispatch(setSabhaMemberSearchText(searchText)),
+    openSabhaFormDialog: (selectedSabha: SabhaData | null) =>
+      dispatch(openSabhaFormDialog(selectedSabha)),
+    closeSabhaFormDailog: () => dispatch(closeSabhaFormDailog()),
   };
 
   const thunks = {
@@ -37,6 +43,7 @@ export const useSabha = () => {
     startSabha: (sabhaId: number) => dispatch(startSabha(sabhaId)),
     submitSabhaReport: (sabhaId: number) =>
       dispatch(submitSabhaReport(sabhaId)),
+    createSabha: (title: string) => dispatch(createSabha(title)),
   };
 
   return {

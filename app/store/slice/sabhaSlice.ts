@@ -16,6 +16,7 @@ interface SabhaState {
   selectedSabha: SabhaData | null;
   totalPresentOnSelectedSabha: number;
   totalAbsentOnSelectedSabha: number;
+  sabhaFormDialog: boolean;
   searchText: string;
   totalSabha: number;
   loading: boolean;
@@ -28,6 +29,7 @@ const initialState: SabhaState = {
   selectedSabha: null,
   totalPresentOnSelectedSabha: 0,
   totalAbsentOnSelectedSabha: 0,
+  sabhaFormDialog: false,
   searchText: "",
   totalSabha: 0,
   loading: false,
@@ -127,6 +129,19 @@ export const submitSabhaReport = createAsyncThunk(
   }
 );
 
+//#region create sabha
+export const createSabha = createAsyncThunk(
+  "sabha/createSabha",
+  async (title: string, { rejectWithValue }) => {
+    try {
+      const response = await sabhaService.createSabha(title);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to create sabha");
+    }
+  }
+);
+
 // #region sabha slice
 const sabhaSlice = createSlice({
   name: "sabha",
@@ -140,6 +155,14 @@ const sabhaSlice = createSlice({
     },
     setSabhaMemberSearchText(state, action: PayloadAction<string>) {
       state.searchText = action.payload;
+    },
+    openSabhaFormDialog(state, action: PayloadAction<SabhaData | null>) {
+      state.sabhaFormDialog = true;
+      state.selectedSabha = action.payload;
+    },
+    closeSabhaFormDailog(state) {
+      state.sabhaFormDialog = false;
+      state.selectedSabha = null;
     },
   },
   extraReducers: (builder) => {
@@ -233,7 +256,7 @@ const sabhaSlice = createSlice({
           (m) => m.id === action.payload.userId
         );
 
-        if (index !== -1 && state.sabhaMembers[index].is_present) {
+        if (index !== -1) {
           state.sabhaMembers[index].is_present = false;
           state.totalPresentOnSelectedSabha =
             state.totalPresentOnSelectedSabha > 0
@@ -282,11 +305,30 @@ const sabhaSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
+
+    //#region create sabha
+    builder
+      .addCase(createSabha.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(createSabha.fulfilled, (state, action) => {
+        state.sabhaList.unshift(action.payload);
+        state.totalSabha += 1;
+        state.sabhaFormDialog = false;
+      })
+      .addCase(createSabha.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
   },
 });
 
-export const { setSabhaList, setLoading, setSabhaMemberSearchText } =
-  sabhaSlice.actions;
+export const {
+  setSabhaList,
+  setLoading,
+  setSabhaMemberSearchText,
+  openSabhaFormDialog,
+  closeSabhaFormDailog,
+} = sabhaSlice.actions;
 
 export const selectFilteredSabhaMembers = (state: { sabha: SabhaState }) => {
   const { sabhaMembers, searchText } = state.sabha;

@@ -2,11 +2,13 @@ import { CirclePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Virtuoso } from "react-virtuoso";
+import SabhaFormDialog from "~/components/forms/SabhaForm";
 import EventCard from "~/components/shared-component/EventCard";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
 import LoadingSpinner from "~/components/shared-component/LoadingSpinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useSabha } from "~/hooks/useSabha";
+import { cn } from "~/lib/utils";
 
 type SabhaTabs = "upcoming-sabha" | "completed-sabha";
 
@@ -17,6 +19,7 @@ export default function Sabha() {
     totalSabha,
     setSabhaList,
     fetchSabhaList,
+    openSabhaFormDialog,
   } = useSabha();
   const [activeTab, setActiveTab] = useState<SabhaTabs>("upcoming-sabha");
   const [page, setPage] = useState(1);
@@ -67,9 +70,11 @@ export default function Sabha() {
       headerConfigs={{
         title: "Sabha",
         children: (
-          <Link to="/sabha/create-event">
-            <CirclePlus />
-          </Link>
+          <CirclePlus
+            onClick={() => {
+              openSabhaFormDialog(null);
+            }}
+          />
         ),
       }}
     >
@@ -82,17 +87,24 @@ export default function Sabha() {
           <TabsTrigger value="upcoming-sabha">Upcoming Sabha</TabsTrigger>
           <TabsTrigger value="completed-sabha">Completed Sabha</TabsTrigger>
         </TabsList>
-        <TabsContent value="upcoming-sabha" className="p-4 h-full w-full">
-          {loading ? (
+        <TabsContent value="upcoming-sabha" className="h-full w-full px-4">
+          {sabhaLoading ? (
             <LoadingSpinner />
           ) : (
             <Virtuoso
-              totalCount={totalSabha}
+              // totalCount={totalSabha}
+              data={sabhaList}
               endReached={handleEndReached}
-              itemContent={(index) => {
-                const sabha = sabhaList[index];
+              itemContent={(index, sabha) => {
                 return (
-                  <div key={sabha?.id} className="w-full mb-4">
+                  <div
+                    key={sabha?.id}
+                    className={cn(
+                      "w-full mb-4",
+                      index === 0 && "pt-4",
+                      index === sabhaList.length && "pb-4"
+                    )}
+                  >
                     <EventCard sabha={sabha} />
                   </div>
                 );
@@ -105,18 +117,19 @@ export default function Sabha() {
                   ) : null;
                 },
               }}
+              className="h-full w-full"
             />
           )}
         </TabsContent>
         <TabsContent value="completed-sabha" className="p-4 w-full h-full">
-          {loading ? (
+          {sabhaLoading ? (
             <LoadingSpinner />
           ) : (
             <Virtuoso
               totalCount={totalSabha}
+              data={sabhaList}
               endReached={handleEndReached}
-              itemContent={(index) => {
-                const sabha = sabhaList[index];
+              itemContent={(index, sabha) => {
                 return (
                   <div key={sabha?.id} className="w-full mb-4">
                     <EventCard sabha={sabha} />
@@ -132,6 +145,7 @@ export default function Sabha() {
           )}
         </TabsContent>
       </Tabs>
+      <SabhaFormDialog />
     </LayoutWrapper>
   );
 }

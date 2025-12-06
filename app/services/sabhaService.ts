@@ -97,4 +97,16 @@ export const sabhaService = {
       throw error;
     }
   },
+
+  //#region create sabha
+  createSabha: async (title: string) => {
+    try {
+      const response = await axiosInstance.post(`${API_ENDPOINTS.SABHA.BASE}`, {
+        title,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

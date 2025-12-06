@@ -22,7 +22,7 @@ function EventCard({ sabha }: { sabha: SabhaData }) {
   const totalAbsents = totalUsers - totalPresents;
   const attendancePercentage =
     totalUsers > 0 ? Math.round((totalPresents / totalUsers) * 100) : 0;
-  const { startSabha } = useSabha();
+  const { startSabha, openSabhaFormDialog } = useSabha();
 
   const [open, setOpen] = useState(false);
   return (
@@ -33,6 +33,14 @@ function EventCard({ sabha }: { sabha: SabhaData }) {
         status === "completed" && "bg-green-400/10 border-l-green-500",
         status === "running" && "bg-orange-400/10 border-l-orange-500"
       )}
+      onClick={(e) => {
+        // If click originated from the Start/Join/Completed button → stop
+        if ((e.target as HTMLElement).closest("button")) return;
+
+        if (sabha?.status !== "upcoming") return;
+
+        openSabhaFormDialog(sabha);
+      }}
     >
       <div className="w-full flex items-center justify-between">
         {/* Content */}
@@ -45,14 +53,16 @@ function EventCard({ sabha }: { sabha: SabhaData }) {
 
         {/* Start Button */}
         <button
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
             if (status === "completed" || status === "running") {
               return navigate(`/sabha/attendance/${sabha.id}`);
             }
             setOpen(true);
           }}
           className={cn(
-            "block px-5 py-2 text-sm text-white font-medium rounded-full",
+            "block px-5 py-2 text-sm text-white font-medium rounded-full z-20",
             status === "upcoming" && "bg-blue-500",
             status === "completed" && "bg-green-500 cursor-not-allowed",
             status === "running" && "bg-orange-500"
