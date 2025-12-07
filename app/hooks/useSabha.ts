@@ -3,6 +3,8 @@ import {
   absentAttendance,
   closeSabhaFormDailog,
   createSabha,
+  doMemberAbsent,
+  doMemberPresent,
   fetchSabhaById,
   fetchSabhaList,
   openSabhaFormDialog,
@@ -30,6 +32,8 @@ export const useSabha = () => {
     openSabhaFormDialog: (selectedSabha: SabhaData | null) =>
       dispatch(openSabhaFormDialog(selectedSabha)),
     closeSabhaFormDailog: () => dispatch(closeSabhaFormDailog()),
+    doMemberPresent: (userId: number) => dispatch(doMemberPresent(userId)),
+    doMemberAbsenent: (userId: number) => dispatch(doMemberAbsent(userId)),
   };
 
   const thunks = {

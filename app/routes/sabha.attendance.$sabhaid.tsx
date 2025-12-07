@@ -17,7 +17,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { ABSENT_MEMBER, PRESENT_MEMBER } from "~/constant/constant";
 import { useSabha } from "~/hooks/useSabha";
+import { localJsonStorageService } from "~/lib/localStorage";
 
 export function meta({}: MetaArgs) {
   return [
@@ -60,6 +62,7 @@ export default function EventAttendance() {
     setSabhaMemberSearchText,
     submitSabhaReport,
   } = useSabha();
+  const [hasPendingChanges, setHasPendingChanges] = useState(false);
 
   const [dialog, setDialog] = useState<DialogState>({
     open: false,
@@ -72,6 +75,15 @@ export default function EventAttendance() {
     fetchSabhaById(Number(sabhaId), { page: 1, limit: 2000 });
   };
 
+  const checkPendingChanges = () => {
+    const present =
+      localJsonStorageService.getItem<number[]>(PRESENT_MEMBER) || [];
+    const absent =
+      localJsonStorageService.getItem<number[]>(ABSENT_MEMBER) || [];
+
+    setHasPendingChanges(present.length > 0 || absent.length > 0);
+  };
+
   const openDialog = (
     title: string,
     message: string,
@@ -82,6 +94,10 @@ export default function EventAttendance() {
 
   const handleRefreshSabha = async () => {
     await fetchSabhaMembers();
+
+    localJsonStorageService.setItem(PRESENT_MEMBER, []);
+    localJsonStorageService.setItem(ABSENT_MEMBER, []);
+    checkPendingChanges();
 
     openDialog(
       "Synced Successfully!",
@@ -132,7 +148,12 @@ export default function EventAttendance() {
 
   useEffect(() => {
     fetchSabhaMembers();
+    checkPendingChanges();
   }, [sabhaId]);
+
+  useEffect(() => {
+    checkPendingChanges();
+  }, [sabhaMembers]);
 
   return (
     <LayoutWrapper
@@ -142,10 +163,17 @@ export default function EventAttendance() {
         iconName: "ArrowLeft",
         children: (
           <div className="flex justify-end items-center gap-2">
-            <RotateCcw
+            <div
+              className="relative cursor-pointer"
               onClick={handleRefreshSabha}
-              className="cursor-pointer"
-            />
+            >
+              <RotateCcw />
+
+              {hasPendingChanges && (
+                <span className="absolute -top-0 right-0 w-2 h-2 rounded-full bg-red-500"></span>
+              )}
+            </div>
+
             {selectedSabha?.status === "running" && (
               <Send onClick={handleSubmitSabha} className="cursor-pointer" />
             )}

@@ -6,6 +6,8 @@ import { cn } from "~/lib/utils";
 import { Separator } from "../ui/separator";
 import { useSabha } from "~/hooks/useSabha";
 import type { SabhaData } from "~/types/sabha.interface";
+import { localJsonStorageService } from "~/lib/localStorage";
+import { ABSENT_MEMBER, PRESENT_MEMBER } from "~/constant/constant";
 
 function MemberListCard({
   member,
@@ -16,26 +18,55 @@ function MemberListCard({
   from: "attendance" | "members" | "report";
   selectedSabha?: SabhaData | null;
 }) {
-  const { presetAttendance, absentAttendance } = useSabha();
+  const { doMemberPresent, doMemberAbsenent } = useSabha();
   const navigate = useNavigate();
 
-  const handleStatusAction = (status: string) => {
-    if (status === "present") {
-      // already present → no need to call API again
-      if (member.is_present) return;
+  const handlePresentClick = (id: number) => {
+    // 1. Update Redux
+    doMemberPresent(id);
 
-      // mark present
-      presetAttendance(Number(selectedSabha?.id), member.id);
-      return;
+    // 2. LocalStorage updates
+    let presentUsers =
+      localJsonStorageService.getItem<number[]>(PRESENT_MEMBER) || [];
+
+    let absentUsers =
+      localJsonStorageService.getItem<number[]>(ABSENT_MEMBER) || [];
+
+    // Add to present if not exists
+    if (!presentUsers.includes(id)) {
+      presentUsers.push(id);
     }
 
-    if (status === "absent") {
-      // already absent → no need to call API again
-      if (member.is_present === false) return;
+    // Remove from absent if exists
+    absentUsers = absentUsers.filter((u) => u !== id);
 
-      // mark absent
-      absentAttendance(Number(selectedSabha?.id), member.id);
+    // Save back
+    localJsonStorageService.setItem(PRESENT_MEMBER, presentUsers);
+    localJsonStorageService.setItem(ABSENT_MEMBER, absentUsers);
+  };
+
+  const handleAbsentClick = (id: number) => {
+    // 1. Update Redux
+    doMemberAbsenent(id);
+
+    // 2. LocalStorage updates
+    let absentUsers =
+      localJsonStorageService.getItem<number[]>(ABSENT_MEMBER) || [];
+
+    let presentUsers =
+      localJsonStorageService.getItem<number[]>(PRESENT_MEMBER) || [];
+
+    // Add to absent if not exists
+    if (!absentUsers.includes(id)) {
+      absentUsers.push(id);
     }
+
+    // Remove from present if exists
+    presentUsers = presentUsers.filter((u) => u !== id);
+
+    // Save back
+    localJsonStorageService.setItem(ABSENT_MEMBER, absentUsers);
+    localJsonStorageService.setItem(PRESENT_MEMBER, presentUsers);
   };
 
   return (
@@ -73,7 +104,7 @@ function MemberListCard({
           <div className="w-full flex justify-start items-center gap-12 mt-0.5 pl-4">
             {/* 1. Present / Green Check */}
             <button
-              onClick={() => handleStatusAction("present")}
+              onClick={() => handlePresentClick(member?.id)}
               className={cn(
                 "flex items-center justify-center rounded-full transition-transform p-1",
                 member.is_present && "bg-greenTextColor"
@@ -92,7 +123,7 @@ function MemberListCard({
 
             {/* 2. Absent / Red Cross */}
             <button
-              onClick={() => handleStatusAction("absent")}
+              onClick={() => handleAbsentClick(member?.id)}
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-full transition-transform",
                 (member?.is_present === false ||

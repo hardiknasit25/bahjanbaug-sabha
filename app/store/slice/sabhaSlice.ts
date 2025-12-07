@@ -164,6 +164,34 @@ const sabhaSlice = createSlice({
       state.sabhaFormDialog = false;
       state.selectedSabha = null;
     },
+    doMemberPresent: (state, action: PayloadAction<number>) => {
+      const userId = action.payload;
+      console.log("userId: ", userId);
+
+      // 1. Find the user
+      const findUser = state.sabhaMembers.find(
+        (member) => member.id === userId
+      );
+      console.log("findUser: ", findUser);
+
+      if (findUser) {
+        // 2. Update state
+        findUser.is_present = true;
+      }
+    },
+    doMemberAbsent: (state, action: PayloadAction<number>) => {
+      const userId = action.payload;
+
+      // 1. Find the user
+      const findUser = state.sabhaMembers.find(
+        (member) => member.id === userId
+      );
+
+      if (findUser) {
+        // 2. Update state
+        findUser.is_present = false;
+      }
+    },
   },
   extraReducers: (builder) => {
     //#region fetch sabha list
@@ -328,6 +356,8 @@ export const {
   setSabhaMemberSearchText,
   openSabhaFormDialog,
   closeSabhaFormDailog,
+  doMemberPresent,
+  doMemberAbsent,
 } = sabhaSlice.actions;
 
 export const selectFilteredSabhaMembers = (state: { sabha: SabhaState }) => {
