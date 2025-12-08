@@ -1,7 +1,7 @@
 import type { MemberData } from "~/types/members.interface";
 
 export function filterMembers(memberList: MemberData[], searchText: string) {
-  const query = searchText.trim().toLowerCase();
+  const query = searchText?.trim().toLowerCase();
   if (!query) return memberList;
 
   const words = query.split(" ").filter(Boolean);

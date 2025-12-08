@@ -9,15 +9,36 @@ import CircularProgress from "./CircularProgress";
 import MemberListCard from "./MemberListCard";
 import { Download } from "lucide-react";
 import { cn } from "~/lib/utils";
+import type { PoshakGroupData } from "~/types/members.interface";
 
-function GroupAccordionMember({ from }: { from: "report" | "members" }) {
-  const { membersByPoshakGroups } = useMembers();
+function GroupAccordionMember({
+  groupData,
+  from,
+  totalSabha,
+}: {
+  groupData: PoshakGroupData[];
+  from: "report" | "members";
+  totalSabha?: number;
+}) {
   return (
     <div className="h-full w-full overflow-auto">
-      {membersByPoshakGroups.map((group, index) => {
+      {groupData.map((group, index) => {
         const poshakLeaderName = group?.leader_details
-          ? `${group.leader_details.first_name} ${group.leader_details.middle_name} ${group.leader_details.last_name}`.trim()
+          ? `${group.leader_details.first_name} ${group.leader_details.middle_name} ${group.leader_details.last_name}`?.trim()
           : "Others";
+        const groupAllMembersPresentCount = group?.users?.reduce(
+          (acc, member) => acc + (member.total_present || 0),
+          0
+        );
+
+        const groupTotalPercentage =
+          groupAllMembersPresentCount && totalSabha
+            ? Math.round(
+                (groupAllMembersPresentCount /
+                  (group.users.length * totalSabha)) *
+                  100
+              )
+            : 0;
         return (
           <Accordion type="multiple" defaultValue={[`group-${index}`]}>
             <AccordionItem value={`group-${index}`} key={`group-${index}`}>
@@ -41,7 +62,7 @@ function GroupAccordionMember({ from }: { from: "report" | "members" }) {
                       <CircularProgress
                         size={45}
                         strokeWidth={2}
-                        value={(index + 1) * 10}
+                        value={groupTotalPercentage}
                       />
                       <Download size={20} className="text-blueTextColor" />
                     </div>
@@ -54,6 +75,7 @@ function GroupAccordionMember({ from }: { from: "report" | "members" }) {
                     key={member.smk_no}
                     member={member}
                     from={from}
+                    totalSabha={totalSabha}
                   />
                 ))}
               </AccordionContent>

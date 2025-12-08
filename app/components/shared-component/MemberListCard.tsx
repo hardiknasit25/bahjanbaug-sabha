@@ -13,10 +13,12 @@ function MemberListCard({
   member,
   from,
   selectedSabha,
+  totalSabha,
 }: {
   member: MemberData;
   from: "attendance" | "members" | "report";
   selectedSabha?: SabhaData | null;
+  totalSabha?: number;
 }) {
   const { doMemberPresent, doMemberAbsenent } = useSabha();
   const navigate = useNavigate();
@@ -153,17 +155,26 @@ function MemberListCard({
               <p className="bg-green-200 size-5 flex justify-center items-center text-xs rounded-full text-greenTextColor">
                 P
               </p>
-              <span className="text-green-700">4/5</span>
+              <span className="text-green-700">
+                {member.total_present}/{totalSabha}
+              </span>
             </div>
             <div className="flex justify-start items-center gap-2 border-r border-r-borderColor px-4">
               <p className="bg-red-200 size-5 flex justify-center items-center text-xs rounded-full text-redTextColor">
                 A
               </p>
-              <span className="text-red-700">1/5</span>
+              <span className="text-red-700">
+                {member.total_absent}/{totalSabha}
+              </span>
             </div>
             <div className="flex justify-start items-center gap-2 px-4">
               <ChartColumn size={16} className="text-blueTextColor" />
-              <span className="text-blue-700">90%</span>
+              <span className="text-blue-700">
+                {totalSabha
+                  ? Math.round((member.total_present / totalSabha) * 100)
+                  : 0}
+                %
+              </span>
             </div>
           </div>
         )}

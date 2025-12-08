@@ -5,9 +5,10 @@ import { useMembers } from "~/hooks/useMembers";
 function MemberDetailInfo() {
   const { selectedMember } = useMembers();
   const fullName = `${selectedMember?.first_name} ${selectedMember?.middle_name} ${selectedMember?.last_name}`;
-  const percentageValue =
+  const percentageValue = Math.round(
     ((selectedMember?.total_present ?? 0) * 100) /
-    (selectedMember?.total_sabha ?? 1);
+      (selectedMember?.total_sabha ?? 1)
+  );
   return (
     <div className="sticky top-0 w-full flex flex-col justify-start items-center border-b border-borderColor">
       <div className="w-full bg-primaryColor flex justify-start gap-4 items-start px-4 pb-4">

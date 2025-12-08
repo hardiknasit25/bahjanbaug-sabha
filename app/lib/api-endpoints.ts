@@ -15,4 +15,10 @@ export const API_ENDPOINTS = {
     SUBMIT_SABHA_REPORT: "sabha/complete",
     SYNC: "attendance/sync",
   },
+
+  REPORT: {
+    BASE: "report",
+    MEMBER_REPORT: "report/user",
+    GROUP_REPORT: "report/group",
+  },
 };

@@ -1,15 +1,15 @@
-import { CirclePlus, Download, EllipsisVertical } from "lucide-react";
-import { useState } from "react";
-import { Link, type MetaArgs } from "react-router";
+import { Download } from "lucide-react";
+import { useEffect, useState } from "react";
+import { type MetaArgs } from "react-router";
 import { Virtuoso } from "react-virtuoso";
-import { ClientOnly } from "~/components/shared-component/ClientOnly";
 import EventCard from "~/components/shared-component/EventCard";
 import GroupAccordionMember from "~/components/shared-component/GroupAccordionMember";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
+import LoadingSpinner from "~/components/shared-component/LoadingSpinner";
 import MemberListCard from "~/components/shared-component/MemberListCard";
-import MemberSkeleton from "~/components/skeleton/MemberSkeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { useMembers } from "~/hooks/useMembers";
+import { useReport } from "~/hooks/useReport";
+import { useSabha } from "~/hooks/useSabha";
 
 export function meta({}: MetaArgs) {
   return [
@@ -22,8 +22,33 @@ type ReportTabs = "all-members" | "by-group" | "completed-sabha";
 
 export default function Report() {
   const [activeTab, setActiveTab] = useState<ReportTabs>("all-members");
-  const { members, loading, error } = useMembers();
-  const [searchText, setSearchText] = useState("");
+  const {
+    loading,
+    searchText,
+    memberReport,
+    filteredMembers,
+    groupReport,
+    sabhaCount,
+    fetchMembersReport,
+    fetchGroupReport,
+    setSearchText,
+  } = useReport();
+  const {
+    sabhaList,
+    totalSabha,
+    loading: sabhaLoading,
+    fetchSabhaList,
+  } = useSabha();
+
+  useEffect(() => {
+    if (activeTab === "all-members") {
+      fetchMembersReport();
+    } else if (activeTab === "by-group") {
+      fetchGroupReport();
+    } else if (activeTab === "completed-sabha") {
+      fetchSabhaList("completed");
+    }
+  }, [activeTab]);
 
   return (
     <LayoutWrapper
@@ -31,7 +56,7 @@ export default function Report() {
         title: "Report",
         children: <Download size={20} className="text-white" />,
         className: "flex-col gap-2",
-        description: `Total ${members.length} Members`,
+        description: `Total ${sabhaCount} Sabha`,
         showSearch: true,
         searchPlaceholder: "Search Members...",
         searchValue: searchText,
@@ -52,38 +77,68 @@ export default function Report() {
           <TabsTrigger value="completed-sabha">Completed Sabha</TabsTrigger>
         </TabsList>
         <TabsContent value="all-members" className="h-full w-full">
-          <Virtuoso
-            totalCount={members.length}
-            itemContent={(index) => {
-              const member = members[index];
-              return (
-                <MemberListCard
-                  key={member.smk_no}
-                  member={member}
-                  from={"report"}
-                />
-              );
-            }}
-            components={{
-              Footer: () => (
-                <div className="">
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <MemberSkeleton key={index} />
-                  ))}
-                </div>
-              ),
-            }}
-          />
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <Virtuoso
+              totalCount={filteredMembers.length}
+              itemContent={(index) => {
+                const member = filteredMembers[index];
+                return (
+                  <MemberListCard
+                    key={member.smk_no}
+                    member={member}
+                    totalSabha={sabhaCount}
+                    from={"report"}
+                  />
+                );
+              }}
+              components={{
+                Footer: () => {
+                  return (
+                    filteredMembers.length === 0 && (
+                      <div className="text-center mt-2 text-textLightColor">
+                        No members found
+                      </div>
+                    )
+                  );
+                },
+              }}
+            />
+          )}
         </TabsContent>
         <TabsContent value="by-group" className="h-full w-full overflow-y-auto">
-          <GroupAccordionMember />
+          {loading ? (
+            <LoadingSpinner />
+          ) : (
+            <GroupAccordionMember
+              groupData={groupReport}
+              from="report"
+              totalSabha={sabhaCount}
+            />
+          )}
         </TabsContent>
-        <TabsContent value="completed-sabha" className="p-4">
-          <div className="w-full grid grid-cols-1 gap-4">
-            {Array.from({ length: 10 }).map((_, index) => (
-              <EventCard key={index} />
-            ))}
-          </div>
+        <TabsContent value="completed-sabha" className="p-4 w-full h-full">
+          {sabhaLoading ? (
+            <LoadingSpinner />
+          ) : (
+            <Virtuoso
+              totalCount={totalSabha}
+              data={sabhaList}
+              itemContent={(index, sabha) => {
+                return (
+                  <div key={sabha?.id} className="w-full mb-4">
+                    <EventCard sabha={sabha} />
+                  </div>
+                );
+              }}
+              components={{
+                Footer: () => {
+                  return sabhaList.length === 0 && <div>No sabha found</div>;
+                },
+              }}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </LayoutWrapper>
