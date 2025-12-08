@@ -2,6 +2,8 @@ import { RotateCcw, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   useLoaderData,
+  useNavigate,
+  useNavigationType,
   type LoaderFunction,
   type MetaArgs,
 } from "react-router";
@@ -49,7 +51,8 @@ type DialogState = {
 
 export default function EventAttendance() {
   const { sabhaId } = useLoaderData() as { sabhaId: string };
-
+  const navigate = useNavigate();
+  const navType = useNavigationType();
   const {
     loading,
     selectedSabha,
@@ -83,6 +86,7 @@ export default function EventAttendance() {
       localJsonStorageService.getItem<number[]>(ABSENT_MEMBER) || [];
 
     setHasPendingChanges(present.length > 0 || absent.length > 0);
+    return present.length > 0 || absent.length > 0;
   };
 
   const openDialog = (
@@ -102,7 +106,6 @@ export default function EventAttendance() {
 
     localJsonStorageService.setItem(PRESENT_MEMBER, []);
     localJsonStorageService.setItem(ABSENT_MEMBER, []);
-    checkPendingChanges();
 
     openDialog(
       "Synced Successfully!",
@@ -153,12 +156,90 @@ export default function EventAttendance() {
 
   useEffect(() => {
     fetchSabhaMembers();
-    checkPendingChanges();
   }, [sabhaId]);
 
   useEffect(() => {
-    checkPendingChanges();
-  }, [sabhaMembers]);
+    if (!hasPendingChanges) return;
+    console.log("hasPendingChanges: ", hasPendingChanges);
+
+    openDialog(
+      "Unsynced Changes",
+      "You have unsynced attendance changes. Please sync before leaving. else, your changes may be lost.",
+      [
+        {
+          label: "Cancel",
+          variant: "outline",
+          action: () => {
+            setDialog((d) => ({ ...d, open: false }));
+            navigate(-1);
+          },
+        },
+        {
+          label: "Sync & Leave",
+          action: async () => {
+            setDialog((d) => ({ ...d, open: false }));
+
+            const res = await syncSabhaAttendance(Number(sabhaId));
+
+            if (res) {
+              localJsonStorageService.setItem(PRESENT_MEMBER, []);
+              localJsonStorageService.setItem(ABSENT_MEMBER, []);
+              navigate(-1);
+            }
+          },
+        },
+      ]
+    );
+  }, [hasPendingChanges]);
+
+  const openUnsyncedDialog = () => {
+    openDialog(
+      "Unsynced Changes",
+      "You have unsynced attendance changes. Please sync before leaving.",
+      [
+        {
+          label: "Cancel",
+          variant: "outline",
+          action: () => {
+            setDialog((d) => ({ ...d, open: false }));
+          },
+        },
+        {
+          label: "Sync & Leave",
+          action: async () => {
+            setDialog((d) => ({ ...d, open: false }));
+
+            const res = await syncSabhaAttendance(Number(sabhaId));
+            if (res) {
+              localJsonStorageService.setItem(PRESENT_MEMBER, []);
+              localJsonStorageService.setItem(ABSENT_MEMBER, []);
+
+              navigate("/sabha"); // Now allow back navigation
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+
+    const handleBack = () => {
+      console.log("Back pressed - intercepted");
+      const hasPendingChanges = checkPendingChanges();
+      if (!hasPendingChanges) {
+        navigate("/sabha");
+      } else {
+        openUnsyncedDialog();
+      }
+      window.history.pushState(null, "", window.location.href);
+    };
+
+    window.addEventListener("popstate", handleBack);
+
+    return () => window.removeEventListener("popstate", handleBack);
+  }, []);
 
   return (
     <LayoutWrapper
@@ -166,6 +247,11 @@ export default function EventAttendance() {
       headerConfigs={{
         title: "Attendance",
         iconName: "ArrowLeft",
+        onBackClick: () => {
+          // if (hasPendingChanges) openUnsyncedDialog();
+          // else navigate(-1);
+          checkPendingChanges();
+        },
         children: (
           <div className="flex justify-end items-center gap-2">
             <div
@@ -174,7 +260,11 @@ export default function EventAttendance() {
             >
               <RotateCcw />
 
-              {hasPendingChanges && (
+              {((
+                localJsonStorageService.getItem<number[]>(PRESENT_MEMBER) ?? []
+              ).length > 0 ||
+                (localJsonStorageService.getItem<number[]>(ABSENT_MEMBER) ?? [])
+                  .length > 0) && (
                 <span className="absolute -top-0 right-0 w-2 h-2 rounded-full bg-red-500"></span>
               )}
             </div>
