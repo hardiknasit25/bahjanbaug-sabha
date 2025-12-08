@@ -27,6 +27,7 @@ export interface MemberData {
   is_present?: boolean;
   total_sabha: number;
   total_present: number;
+  total_absent: number;
 }
 
 export interface PoshakGroupData {

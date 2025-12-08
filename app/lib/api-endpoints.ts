@@ -12,9 +12,7 @@ export const API_ENDPOINTS = {
     START_SABHA: "sabha/start",
     CREATE_EVENT: "create-event",
     UPDATE_EVENT: "update-event",
-    ATTENDANCE_PRESENT: "attendance/present",
-    ATTENDANCE_ABSENT: "attendance/absent",
     SUBMIT_SABHA_REPORT: "sabha/complete",
-    SYNC: "sabha/sync",
+    SYNC: "attendance/sync",
   },
 };

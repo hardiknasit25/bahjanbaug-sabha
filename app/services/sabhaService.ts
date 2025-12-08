@@ -39,41 +39,9 @@ export const sabhaService = {
         localJsonStorageService.getItem<number[]>(ABSENT_MEMBER) || [];
       const response = await axiosInstance.post(`${API_ENDPOINTS.SABHA.SYNC}`, {
         sabha_id: sabhaId,
-        parent_user_id: presentUserIds,
+        present_user_id: presentUserIds,
         absent_user_id: absentUserIds,
       });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  //#region preset attendance for userId by sabhaId
-  presetAttendance: async (sabhaId: number, userId: number) => {
-    try {
-      const response = await axiosInstance.post(
-        `${API_ENDPOINTS.SABHA.ATTENDANCE_PRESENT}`,
-        {
-          sabha_id: sabhaId,
-          user_id: userId,
-        }
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  //#region absent attendance for userId by sabhaId
-  absentAttendance: async (sabhaId: number, userId: number) => {
-    try {
-      const response = await axiosInstance.post(
-        `${API_ENDPOINTS.SABHA.ATTENDANCE_ABSENT}`,
-        {
-          sabha_id: sabhaId,
-          user_id: userId,
-        }
-      );
       return response.data;
     } catch (error) {
       throw error;

@@ -27,7 +27,6 @@ type SabhaFormData = z.infer<typeof sabhaFormSchema>;
 export default function SabhaFormDialog() {
   const { selectedSabha, sabhaFormDialog, closeSabhaFormDailog, createSabha } =
     useSabha();
-  console.log("selectedSabha: ", selectedSabha);
 
   const DEFAULT_NAME = "Yuva Sabha";
 

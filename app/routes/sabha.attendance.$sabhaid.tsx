@@ -94,7 +94,11 @@ export default function EventAttendance() {
   };
 
   const handleRefreshSabha = async () => {
-    await syncSabhaAttendance(Number(sabhaId));
+    const response = await syncSabhaAttendance(Number(sabhaId)).unwrap();
+
+    if (!response) {
+      return;
+    }
 
     localJsonStorageService.setItem(PRESENT_MEMBER, []);
     localJsonStorageService.setItem(ABSENT_MEMBER, []);

@@ -24,6 +24,7 @@ export default function Sabha() {
   const [activeTab, setActiveTab] = useState<SabhaTabs>("upcoming-sabha");
 
   const fetchSabhaListData = async () => {
+    setSabhaList([]);
     const data = await fetchSabhaList(
       activeTab === "upcoming-sabha" ? "upcoming" : "completed"
     ).unwrap();
@@ -31,9 +32,15 @@ export default function Sabha() {
   };
 
   useEffect(() => {
-    setSabhaList([]);
     fetchSabhaListData();
   }, [activeTab]);
+
+  useEffect(() => {
+    // Cleanup when component unmounts
+    return () => {
+      setSabhaList([]);
+    };
+  }, []);
 
   return (
     <LayoutWrapper

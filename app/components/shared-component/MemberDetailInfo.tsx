@@ -5,10 +5,9 @@ import { useMembers } from "~/hooks/useMembers";
 function MemberDetailInfo() {
   const { selectedMember } = useMembers();
   const fullName = `${selectedMember?.first_name} ${selectedMember?.middle_name} ${selectedMember?.last_name}`;
-  const totalSabha = selectedMember?.total_sabha ?? 0;
-  const totalPresent = selectedMember?.total_present ?? 0;
-  const totalAbsent = totalSabha - totalPresent;
-  const percentageValue = (totalPresent * 100) / totalSabha;
+  const percentageValue =
+    ((selectedMember?.total_present ?? 0) * 100) /
+    (selectedMember?.total_sabha ?? 1);
   return (
     <div className="sticky top-0 w-full flex flex-col justify-start items-center border-b border-borderColor">
       <div className="w-full bg-primaryColor flex justify-start gap-4 items-start px-4 pb-4">
@@ -40,7 +39,7 @@ function MemberDetailInfo() {
       <div className="w-full flex justify-evenly items-start bg-white p-2">
         <div className="flex flex-col justify-start items-center">
           <span className="text-green-500 text-xl">
-            {totalPresent}/{totalSabha}
+            {selectedMember?.total_present}/{selectedMember?.total_sabha}
           </span>
           <p className="flex justify-center items-center text-sm font-medium rounded-full text-textColor">
             Present
@@ -48,7 +47,7 @@ function MemberDetailInfo() {
         </div>
         <div className="flex flex-col justify-start items-center">
           <span className="text-redTextColor text-xl">
-            {totalAbsent}/{totalSabha}
+            {selectedMember?.total_absent}/{selectedMember?.total_sabha}
           </span>
           <p className="flex justify-center items-center text-sm font-medium rounded-full text-textColor">
             Absent
