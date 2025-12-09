@@ -13,6 +13,7 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { useSabha } from "~/hooks/useSabha";
+import { Pencil } from "lucide-react";
 
 function EventCard({ sabha }: { sabha: SabhaData }) {
   const navigate = useNavigate();
@@ -45,9 +46,12 @@ function EventCard({ sabha }: { sabha: SabhaData }) {
       <div className="w-full flex items-center justify-between">
         {/* Content */}
         <div className="flex flex-col flex-1 py-3">
-          <h2 className="font-semibold text-lg text-textColor font-poppins capitalize">
-            {sabha?.title}
-          </h2>
+          <div className="flex justify-start items-center gap-2">
+            <h2 className="font-semibold text-lg text-textColor font-poppins capitalize">
+              {sabha?.title}
+            </h2>
+            {status === "upcoming" && <Pencil size={16} />}
+          </div>
           <p className="text-sm text-textLightColor">{sabha?.sabha_date}</p>
         </div>
 

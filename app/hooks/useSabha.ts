@@ -14,6 +14,7 @@ import {
   startSabha,
   submitSabhaReport,
   syncSabhaAttendance,
+  updateSabha,
 } from "~/store/slice/sabhaSlice";
 import type { SabhaData } from "~/types/sabha.interface";
 
@@ -44,6 +45,8 @@ export const useSabha = () => {
     submitSabhaReport: (sabhaId: number) =>
       dispatch(submitSabhaReport(sabhaId)),
     createSabha: (title: string) => dispatch(createSabha(title)),
+    updateSabha: (sabhaId: number, title: string) =>
+      dispatch(updateSabha({ sabhaId, title })),
   };
 
   return {

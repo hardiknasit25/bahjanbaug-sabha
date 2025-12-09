@@ -25,8 +25,13 @@ const sabhaFormSchema = z.object({
 type SabhaFormData = z.infer<typeof sabhaFormSchema>;
 
 export default function SabhaFormDialog() {
-  const { selectedSabha, sabhaFormDialog, closeSabhaFormDailog, createSabha } =
-    useSabha();
+  const {
+    selectedSabha,
+    sabhaFormDialog,
+    closeSabhaFormDailog,
+    createSabha,
+    updateSabha,
+  } = useSabha();
 
   const DEFAULT_NAME = "Yuva Sabha";
 
@@ -48,6 +53,8 @@ export default function SabhaFormDialog() {
     const title = data.sabhaName;
     if (!selectedSabha) {
       createSabha(title);
+    } else {
+      updateSabha(selectedSabha.id, title);
     }
     reset({
       sabhaName: DEFAULT_NAME,

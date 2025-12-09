@@ -87,4 +87,19 @@ export const sabhaService = {
       throw error;
     }
   },
+
+  //#region update sabha
+  updateSabha: async (sabhaId: number, title: string) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.SABHA.BASE}/${sabhaId}`,
+        {
+          title,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

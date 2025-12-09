@@ -127,6 +127,22 @@ export const createSabha = createAsyncThunk(
   }
 );
 
+//#region update sabha
+export const updateSabha = createAsyncThunk(
+  "sabha/updateSabha",
+  async (
+    { sabhaId, title }: { sabhaId: number; title: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await sabhaService.updateSabha(sabhaId, title);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue("Failed to update sabha");
+    }
+  }
+);
+
 // #region sabha slice
 const sabhaSlice = createSlice({
   name: "sabha",
@@ -304,6 +320,25 @@ const sabhaSlice = createSlice({
         state.sabhaFormDialog = false;
       })
       .addCase(createSabha.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    //#region update sabha
+    builder
+      .addCase(updateSabha.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateSabha.fulfilled, (state, action) => {
+        const updatedSabha = action.payload;
+        const index = state.sabhaList.findIndex(
+          (sabha) => sabha.id === updatedSabha.id
+        );
+        if (index !== -1) {
+          state.sabhaList[index] = updatedSabha;
+        }
+        state.sabhaFormDialog = false;
+      })
+      .addCase(updateSabha.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },
