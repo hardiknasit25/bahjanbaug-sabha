@@ -28,6 +28,13 @@ export interface MemberData {
   total_sabha: number;
   total_present: number;
   total_absent: number;
+  attendance_by_sabha: {
+    sabha_id: number;
+    title: string;
+    present: boolean;
+    reason: string | null;
+    sabha_date: string;
+  }[];
 }
 
 export interface PoshakGroupData {

@@ -29,7 +29,7 @@ function EventCard({ sabha }: { sabha: SabhaData }) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-between bg-eventCardColor rounded-xl shadow-sm overflow-hidden border-l-8 px-4",
+        "flex flex-col items-center justify-between bg-eventCardColor rounded-xl shadow-sm overflow-hidden border-l-4 px-4",
         status === "upcoming" && "bg-blue-400/10 border-l-blue-500",
         status === "completed" && "bg-green-400/10 border-l-green-500",
         status === "running" && "bg-orange-400/10 border-l-orange-500"
@@ -47,7 +47,7 @@ function EventCard({ sabha }: { sabha: SabhaData }) {
         {/* Content */}
         <div className="flex flex-col flex-1 py-3">
           <div className="flex justify-start items-center gap-2">
-            <h2 className="font-semibold text-lg text-textColor font-poppins capitalize">
+            <h2 className="font-semibold text-lg text-textColor capitalize">
               {sabha?.title}
             </h2>
             {status === "upcoming" && <Pencil size={16} />}
