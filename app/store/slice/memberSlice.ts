@@ -17,6 +17,7 @@ interface MemberState {
   members: MemberData[];
   membersByPoshakGroups: PoshakGroupData[];
   selectedMember: MemberData | null;
+  groupSelect: { id: number; leader_name: string; group_name: string }[];
   totalMembers: number;
   loading: boolean;
   error: string | null;
@@ -27,6 +28,7 @@ const initialState: MemberState = {
   members: [],
   membersByPoshakGroups: [],
   selectedMember: null,
+  groupSelect: [],
   totalMembers: 0,
   loading: false,
   error: null,
@@ -117,6 +119,19 @@ export const enterSabhaReason = createAsyncThunk(
         user_id: number;
         reason: string;
       };
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+//#region group select thunk
+export const fetchGroupSelect = createAsyncThunk(
+  "members/fetchGroupSelect",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await memberService.groupSelect();
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -230,6 +245,11 @@ const memberSlice = createSlice({
       .addCase(enterSabhaReason.rejected, (state, action) => {
         state.error = action.payload as string;
       });
+
+    //#regin etch group select thunk
+    builder.addCase(fetchGroupSelect.fulfilled, (state, action) => {
+      state.groupSelect = action.payload.rows;
+    });
   },
 });
 

@@ -1,6 +1,6 @@
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   userCreateSchema,
   type UserCreateFormData,
@@ -11,6 +11,18 @@ import ChipController from "../formController.tsx/ChipController";
 import DatePickerController from "../formController.tsx/DatePickerController";
 import TextAreaController from "../formController.tsx/TextAreaController";
 import SubmitButton from "../shared-component/SubmitButton";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { useMembers } from "~/hooks/useMembers";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { SelectLabel } from "@radix-ui/react-select";
+import MultiSelect from "../formController.tsx/MultiSelect";
 
 interface MemberFormProps {
   mode?: "create" | "update";
@@ -45,6 +57,8 @@ function MemberForm({
   initialData,
   onSubmit,
 }: MemberFormProps) {
+  const { groupSelect, fetchGroupSelect } = useMembers();
+
   const {
     control,
     handleSubmit,
@@ -57,19 +71,16 @@ function MemberForm({
       middle_name: initialData?.middle_name || "",
       email: initialData?.email || "",
       mobile: initialData?.mobile || "",
-      role_id: initialData?.role_id,
       birth_day: initialData?.birth_day || "",
       satsang_day: initialData?.satsang_day || "",
       mulgam: initialData?.mulgam || "",
       smk_no: initialData?.smk_no || "",
       address: initialData?.address || "",
       is_married: initialData?.is_married ?? false,
-      is_job: initialData?.is_job ?? false,
       is_family_leader: initialData?.is_family_leader ?? false,
       is_seva: initialData?.is_seva ?? false,
       occupation: initialData?.occupation,
       occupation_field: initialData?.occupation_field || "",
-      family_leader_id: initialData?.family_leader_id || undefined,
       seva: initialData?.seva || "",
       parichit_bhakt_name: initialData?.parichit_bhakt_name || "",
       group_id: initialData?.group_id || [],
@@ -91,6 +102,10 @@ function MemberForm({
     },
     [onSubmit]
   );
+
+  useEffect(() => {
+    fetchGroupSelect();
+  }, []);
 
   return (
     <div className="w-full h-full">
@@ -140,7 +155,7 @@ function MemberForm({
         />
 
         {/* Role & Organization Section */}
-        <ChipController
+        {/* <ChipController
           name="role_id"
           control={control}
           label="Role"
@@ -148,7 +163,7 @@ function MemberForm({
           options={roleOptions}
           multi={false}
           required
-        />
+        /> */}
 
         <InputController
           name="smk_no"
@@ -191,50 +206,94 @@ function MemberForm({
           rows={3}
         />
 
+        {/* poshak leader */}
+        <div className="space-y-2">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            Select Poshak Group Leader
+          </label>
+
+          <Controller
+            name="group_id"
+            control={control}
+            render={({ field }) => (
+              <MultiSelect
+                options={groupSelect.map((group) => ({
+                  value: String(group.id),
+                  label: group.leader_name,
+                }))}
+                value={field.value || []}
+                onChange={(val) => field.onChange(val)}
+                placeholder="Select group leaders"
+              />
+            )}
+          />
+        </div>
+
         {/* Family Status Section */}
 
         <div className="space-y-2">
           <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              {...control.register("is_married")}
-              className="w-4 h-4 rounded border-borderColor"
-            />
-            <span className="text-sm text-textColor">Is Married</span>
+            Married ?
           </label>
+          <Controller
+            name="is_married"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="flex gap-4"
+              >
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="yes" id="r1" />
+                  <label htmlFor="r1">Yes</label>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="no" id="r2" />
+                  <label htmlFor="r2">No</label>
+                </div>
+              </RadioGroup>
+            )}
+          />
         </div>
 
         <div className="space-y-2">
           <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              {...control.register("is_family_leader")}
-              className="w-4 h-4 rounded border-borderColor"
-            />
-            <span className="text-sm text-textColor">Is Family Leader</span>
+            Family Leader ?
           </label>
+          <Controller
+            name="is_family_leader"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="flex gap-4"
+              >
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="yes" id="r1" />
+                  <label htmlFor="r1">Yes</label>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="no" id="r2" />
+                  <label htmlFor="r2">No</label>
+                </div>
+              </RadioGroup>
+            )}
+          />
         </div>
 
-        <InputController
+        {/* <InputController
           name="family_leader_id"
           control={control}
           label="Family Leader ID"
           type="number"
           placeholder="Enter family leader ID"
-        />
+        /> */}
 
         {/* Occupation Section */}
-
-        <div className="space-y-2">
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              {...control.register("is_job")}
-              className="w-4 h-4 rounded border-borderColor"
-            />
-            <span className="text-sm text-textColor">Has Job</span>
-          </label>
-        </div>
 
         <ChipController
           name="occupation"
@@ -256,13 +315,29 @@ function MemberForm({
 
         <div className="space-y-2">
           <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              {...control.register("is_seva")}
-              className="w-4 h-4 rounded border-borderColor"
-            />
-            <span className="text-sm text-textColor">Does Seva</span>
+            Seva ?
           </label>
+          <Controller
+            name="is_seva"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                className="flex gap-4"
+              >
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="yes" id="r1" />
+                  <label htmlFor="r1">Yes</label>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="no" id="r2" />
+                  <label htmlFor="r2">No</label>
+                </div>
+              </RadioGroup>
+            )}
+          />
         </div>
 
         <TextAreaController

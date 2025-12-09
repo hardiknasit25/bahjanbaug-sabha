@@ -22,4 +22,8 @@ export const API_ENDPOINTS = {
     MEMBER_REPORT: "report/user",
     GROUP_REPORT: "report/group",
   },
+
+  GROUPS: {
+    SELECT: "poshak-group/select",
+  },
 };

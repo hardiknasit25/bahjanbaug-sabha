@@ -89,4 +89,16 @@ export const memberService = {
       throw error;
     }
   },
+
+  //#region fetch group select
+  groupSelect: async () => {
+    try {
+      const response = await axiosInstance.get(
+        `${API_ENDPOINTS.GROUPS.SELECT}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

@@ -9,6 +9,7 @@ import {
   fetchMemberById,
   fetchMembersByPoshakGroups,
   enterSabhaReason,
+  fetchGroupSelect,
 } from "~/store/slice/memberSlice";
 import type { CommonParams } from "~/types/common.interface";
 import { type MemberData } from "~/types/members.interface";
@@ -38,6 +39,7 @@ export const useMembers = () => {
     },
     enterSabhaReason: (sabha_id: number, user_id: number, reason: string) =>
       dispatch(enterSabhaReason({ sabha_id, user_id, reason })),
+    fetchGroupSelect: () => dispatch(fetchGroupSelect()),
   };
 
   return {
