@@ -8,6 +8,7 @@ import {
   selectFilteredMembersByPoshakGroups,
   fetchMemberById,
   fetchMembersByPoshakGroups,
+  enterSabhaReason,
 } from "~/store/slice/memberSlice";
 import type { CommonParams } from "~/types/common.interface";
 import { type MemberData } from "~/types/members.interface";
@@ -35,6 +36,8 @@ export const useMembers = () => {
     createMember: (memberData: MemberData) => {
       dispatch(createMember(memberData));
     },
+    enterSabhaReason: (sabha_id: number, user_id: number, reason: string) =>
+      dispatch(enterSabhaReason({ sabha_id, user_id, reason })),
   };
 
   return {

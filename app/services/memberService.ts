@@ -68,4 +68,25 @@ export const memberService = {
       throw error;
     }
   },
+
+  //#region enter reason for sabha
+  enterReasonForSabha: async (
+    sabha_id: number,
+    user_id: number,
+    reason: string
+  ) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.SABHA.REASON}`,
+        {
+          sabha_id,
+          user_id,
+          reason,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

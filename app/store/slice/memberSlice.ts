@@ -98,6 +98,31 @@ export const fetchPoshakGroups = createAsyncThunk(
   }
 );
 
+//#region enterSabhaReson
+export const enterSabhaReason = createAsyncThunk(
+  "members/enterSabhaReason",
+  async (
+    payload: { sabha_id: number; user_id: number; reason: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { sabha_id, user_id, reason } = payload;
+      const response = await memberService.enterReasonForSabha(
+        sabha_id,
+        user_id,
+        reason
+      );
+      return response.data as {
+        sabha_id: number;
+        user_id: number;
+        reason: string;
+      };
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 //#region member slice
 
 const memberSlice = createSlice({
@@ -176,6 +201,33 @@ const memberSlice = createSlice({
       })
       .addCase(createMember.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    //#region enterReasonForSabha
+    builder
+      .addCase(enterSabhaReason.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(enterSabhaReason.fulfilled, (state, action) => {
+        if (state.selectedMember) {
+          state.selectedMember = {
+            ...state.selectedMember,
+            attendance_by_sabha: (
+              state.selectedMember?.attendance_by_sabha ?? []
+            ).map((sabha) => {
+              if (sabha.sabha_id === action.payload.sabha_id) {
+                return {
+                  ...sabha,
+                  reason: action.payload.reason,
+                };
+              }
+              return sabha;
+            }),
+          };
+        }
+      })
+      .addCase(enterSabhaReason.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },

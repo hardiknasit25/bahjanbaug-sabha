@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
     UPDATE_EVENT: "update-event",
     SUBMIT_SABHA_REPORT: "sabha/complete",
     SYNC: "attendance/sync",
+    REASON: "attendance/reason",
   },
 
   REPORT: {

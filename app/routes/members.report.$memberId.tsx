@@ -16,7 +16,8 @@ export const loader: LoaderFunction = async ({ params }) => {
 };
 function MemberReport() {
   const { memberId } = useLoaderData();
-  const { loading, selectedMember, fetchMemberById } = useMembers();
+  const { loading, selectedMember, fetchMemberById, enterSabhaReason } =
+    useMembers();
   const [enableReasonSabhaId, setEnableReasonSabhaId] = useState<number | null>(
     null
   );
@@ -31,15 +32,19 @@ function MemberReport() {
     }));
   };
 
-  const handleSaveReason = (sabhaId: number) => {
+  const handleSaveReason = async (sabhaId: number) => {
     const reason = editedReasons[sabhaId];
     console.log("Saving reason:", {
       memberId,
       sabhaId,
       reason,
     });
-    // TODO: Call API to save reason
-    setEnableReasonSabhaId(null);
+    const response = await enterSabhaReason(sabhaId, memberId, reason).unwrap();
+
+    if (response.sabha_id) {
+      // TODO: Call API to save reason
+      setEnableReasonSabhaId(null);
+    }
   };
 
   const handleCancelEdit = (sabhaId: number, originalReason: string | null) => {
@@ -88,7 +93,7 @@ function MemberReport() {
                 )}
                 key={sabha.sabha_id}
               >
-                <div className="flex flex-col gap-2 justify-start items-start">
+                <div className="flex flex-col justify-start items-start">
                   <span className="font-medium text-base text-textColor capitalize">
                     {sabha?.title}
                   </span>
@@ -97,8 +102,8 @@ function MemberReport() {
                   </span>
                 </div>
                 {!sabha?.present && (
-                  <div className="w-full flex flex-col gap-1 justify-start items-start text-sm">
-                    <span className="text-textLightColor">Reason:</span>
+                  <div className="w-full flex flex-col gap-1 justify-start items-start text-sm mt-2">
+                    <span className="text-textColor">Reason:</span>
                     <div
                       aria-disabled={enableReasonSabhaId !== sabha?.sabha_id}
                       className="w-full bg-white p-2 rounded-md flex justify-between items-center disabled:opacity-50"
@@ -114,7 +119,7 @@ function MemberReport() {
                         onChange={(e) =>
                           handleReasonChange(sabha?.sabha_id, e.target.value)
                         }
-                        className="w-full bg-white outline-none"
+                        className="w-full bg-white outline-none text-textLightColor"
                         placeholder="Enter reason..."
                       />
                       {enableReasonSabhaId === sabha?.sabha_id ? (
