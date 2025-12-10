@@ -158,40 +158,40 @@ export default function EventAttendance() {
     fetchSabhaMembers();
   }, [sabhaId]);
 
-  useEffect(() => {
-    if (!hasPendingChanges) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!hasPendingChanges) {
+  //     return;
+  //   }
 
-    openDialog(
-      "Unsynced Changes",
-      "You have unsynced attendance changes. Please sync before leaving. else, your changes may be lost.",
-      [
-        {
-          label: "Cancel",
-          variant: "outline",
-          action: () => {
-            setDialog((d) => ({ ...d, open: false }));
-            navigate(-1);
-          },
-        },
-        {
-          label: "Sync & Leave",
-          action: async () => {
-            setDialog((d) => ({ ...d, open: false }));
+  //   openDialog(
+  //     "Unsynced Changes",
+  //     "You have unsynced attendance changes. Please sync before leaving. else, your changes may be lost.",
+  //     [
+  //       {
+  //         label: "Cancel",
+  //         variant: "outline",
+  //         action: () => {
+  //           setDialog((d) => ({ ...d, open: false }));
+  //           navigate(-1);
+  //         },
+  //       },
+  //       {
+  //         label: "Sync & Leave",
+  //         action: async () => {
+  //           setDialog((d) => ({ ...d, open: false }));
 
-            const res = await syncSabhaAttendance(Number(sabhaId));
+  //           const res = await syncSabhaAttendance(Number(sabhaId));
 
-            if (res) {
-              localJsonStorageService.setItem(PRESENT_MEMBER, []);
-              localJsonStorageService.setItem(ABSENT_MEMBER, []);
-              navigate(-1);
-            }
-          },
-        },
-      ]
-    );
-  }, [hasPendingChanges]);
+  //           if (res) {
+  //             localJsonStorageService.setItem(PRESENT_MEMBER, []);
+  //             localJsonStorageService.setItem(ABSENT_MEMBER, []);
+  //             navigate(-1);
+  //           }
+  //         },
+  //       },
+  //     ]
+  //   );
+  // }, [hasPendingChanges]);
 
   const openUnsyncedDialog = () => {
     openDialog(
@@ -223,23 +223,47 @@ export default function EventAttendance() {
     );
   };
 
+  // useEffect(() => {
+  //   window.history.pushState(null, "", window.location.href);
+
+  //   const handleBack = () => {
+  //     console.log("Back pressed - intercepted");
+  //     const hasPendingChanges = checkPendingChanges();
+  //     if (!hasPendingChanges) {
+  //       navigate("/sabha");
+  //     } else {
+  //       openUnsyncedDialog();
+  //     }
+  //     window.history.pushState(null, "", window.location.href);
+  //   };
+
+  //   window.addEventListener("popstate", handleBack);
+
+  //   return () => window.removeEventListener("popstate", handleBack);
+  // }, []);
+
   useEffect(() => {
-    window.history.pushState(null, "", window.location.href);
+    return () => {
+      const present =
+        localJsonStorageService.getItem<number[]>(PRESENT_MEMBER) || [];
+      const absent =
+        localJsonStorageService.getItem<number[]>(ABSENT_MEMBER) || [];
 
-    const handleBack = () => {
-      console.log("Back pressed - intercepted");
-      const hasPendingChanges = checkPendingChanges();
-      if (!hasPendingChanges) {
-        navigate("/sabha");
-      } else {
-        openUnsyncedDialog();
+      if (present.length || absent.length) {
+        (async () => {
+          try {
+            const res = await syncSabhaAttendance(Number(sabhaId));
+            if (res) {
+              localJsonStorageService.setItem(PRESENT_MEMBER, []);
+              localJsonStorageService.setItem(ABSENT_MEMBER, []);
+              navigate("/sabha");
+            }
+          } catch (error) {
+            console.error("Sync failed during unmount:", error);
+          }
+        })();
       }
-      window.history.pushState(null, "", window.location.href);
     };
-
-    window.addEventListener("popstate", handleBack);
-
-    return () => window.removeEventListener("popstate", handleBack);
   }, []);
 
   return (
@@ -248,14 +272,6 @@ export default function EventAttendance() {
       headerConfigs={{
         title: "Attendance",
         iconName: "ArrowLeft",
-        onBackClick: () => {
-          const hasPending = checkPendingChanges();
-          if (hasPending) {
-            openUnsyncedDialog();
-          } else {
-            navigate("/sabha");
-          }
-        },
         children: (
           <div className="flex justify-end items-center gap-2">
             <div
