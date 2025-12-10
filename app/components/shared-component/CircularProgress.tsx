@@ -8,7 +8,7 @@ function CircularProgress({ value = 75, size = 70, strokeWidth = 7 }) {
       <svg width={size} height={size}>
         {/* Background Circle */}
         <circle
-          stroke="#E5E7EB"
+          stroke="#22c55e33"
           fill="transparent"
           strokeWidth={strokeWidth}
           r={radius}

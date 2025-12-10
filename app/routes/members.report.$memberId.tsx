@@ -103,7 +103,7 @@ function MemberReport() {
                 </div>
                 {!sabha?.present && (
                   <div className="w-full flex flex-col gap-1 justify-start items-start text-sm mt-2">
-                    <span className="text-textColor">Reason:</span>
+                    <span className="text-redTextColor">Reason:</span>
                     <div
                       aria-disabled={enableReasonSabhaId !== sabha?.sabha_id}
                       className="w-full bg-white p-2 rounded-md flex justify-between items-center disabled:opacity-50"
@@ -119,7 +119,7 @@ function MemberReport() {
                         onChange={(e) =>
                           handleReasonChange(sabha?.sabha_id, e.target.value)
                         }
-                        className="w-full bg-white outline-none text-textLightColor"
+                        className="w-full bg-white outline-none placeholder:text-textLightColor"
                         placeholder="Enter reason..."
                       />
                       {enableReasonSabhaId === sabha?.sabha_id ? (

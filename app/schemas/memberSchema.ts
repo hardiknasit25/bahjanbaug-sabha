@@ -16,14 +16,14 @@ export const userCreateSchema = z.object({
   smk_no: z.string().optional(),
   address: z.string(),
 
-  is_married: z.boolean().optional().default(false),
+  is_married: z.boolean(),
 
   occupation: z.enum(["job", "study", "business"]).optional(),
   occupation_field: z.string().optional(),
 
-  is_family_leader: z.boolean().optional().default(false),
+  is_family_leader: z.boolean(),
 
-  is_seva: z.boolean().optional().default(false),
+  is_seva: z.boolean(),
   seva: z.string().optional(),
 
   parichit_bhakt_name: z.string(),
