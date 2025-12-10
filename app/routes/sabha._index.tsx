@@ -1,6 +1,6 @@
 import { CirclePlus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import { useEffect } from "react";
+import { Link, useSearchParams } from "react-router";
 import { Virtuoso } from "react-virtuoso";
 import SabhaFormDialog from "~/components/forms/SabhaForm";
 import EventCard from "~/components/shared-component/EventCard";
@@ -21,8 +21,16 @@ export default function Sabha() {
     fetchSabhaList,
     openSabhaFormDialog,
   } = useSabha();
-  const [activeTab, setActiveTab] = useState<SabhaTabs>("upcoming-sabha");
 
+  // --------------------------
+  // SEARCH PARAMS
+  // --------------------------
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get("tab") as SabhaTabs) || "upcoming-sabha";
+
+  // --------------------------
+  // FETCH SABHA DATA
+  // --------------------------
   const fetchSabhaListData = async () => {
     setSabhaList([]);
     const data = await fetchSabhaList(
@@ -31,12 +39,13 @@ export default function Sabha() {
     return data.rows;
   };
 
+  // FETCH WHEN TAB CHANGES
   useEffect(() => {
     fetchSabhaListData();
   }, [activeTab]);
 
+  // CLEAR LIST ON UNMOUNT
   useEffect(() => {
-    // Cleanup when component unmounts
     return () => {
       setSabhaList([]);
     };
@@ -57,13 +66,15 @@ export default function Sabha() {
     >
       <Tabs
         value={activeTab}
-        onValueChange={(val) => setActiveTab(val as SabhaTabs)}
+        onValueChange={(val) => setSearchParams({ tab: val })}
         className="w-full h-full flex flex-col justify-start"
       >
         <TabsList className="w-full bg-primaryColor rounded-none justify-evenly h-10 pb-2">
           <TabsTrigger value="upcoming-sabha">Upcoming Sabha</TabsTrigger>
           <TabsTrigger value="completed-sabha">Completed Sabha</TabsTrigger>
         </TabsList>
+
+        {/* UPCOMING SABHA */}
         <TabsContent value="upcoming-sabha" className="h-full w-full p-4">
           {sabhaLoading ? (
             <LoadingSpinner />
@@ -93,6 +104,8 @@ export default function Sabha() {
             />
           )}
         </TabsContent>
+
+        {/* COMPLETED SABHA */}
         <TabsContent value="completed-sabha" className="p-4 w-full h-full">
           {sabhaLoading ? (
             <LoadingSpinner />
@@ -122,6 +135,7 @@ export default function Sabha() {
           )}
         </TabsContent>
       </Tabs>
+
       <SabhaFormDialog />
     </LayoutWrapper>
   );

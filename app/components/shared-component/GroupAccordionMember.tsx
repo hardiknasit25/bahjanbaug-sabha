@@ -40,7 +40,7 @@ function GroupAccordionMember({
               )
             : 0;
         return (
-          <Accordion type="multiple" defaultValue={[`group-${index}`]}>
+          <Accordion type="multiple">
             <AccordionItem value={`group-${index}`} key={`group-${index}`}>
               <AccordionTrigger
                 showArrow={false}

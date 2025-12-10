@@ -42,7 +42,7 @@ function ImageComponent({
       {/* 2. API Image (Hidden until loaded) */}
       {src && !imageState.error && (
         <img
-          src={src}
+          // src={src}
           alt={alt}
           onLoad={handleLoad}
           onError={handleError}

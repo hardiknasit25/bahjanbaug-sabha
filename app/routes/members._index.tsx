@@ -1,6 +1,6 @@
 import { CirclePlus } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, type MetaArgs } from "react-router";
+import { useEffect } from "react";
+import { Link, type MetaArgs, useSearchParams } from "react-router";
 import { Virtuoso } from "react-virtuoso";
 import GroupAccordionMember from "~/components/shared-component/GroupAccordionMember";
 import LayoutWrapper from "~/components/shared-component/LayoutWrapper";
@@ -12,14 +12,13 @@ import { useMembers } from "~/hooks/useMembers";
 export function meta({}: MetaArgs) {
   return [
     { title: "Members" },
-    { name: "description", content: "Welcome to React Router!" },
+    { name: "description", content: "Members page" },
   ];
 }
 
 type MemberTabs = "all-members" | "by-group";
 
 export default function Members() {
-  const [activeTab, setActiveTab] = useState<MemberTabs>("all-members");
   const {
     filteredMembers,
     filteredMembersByPoshakGroups,
@@ -30,23 +29,28 @@ export default function Members() {
     fetchMembersByPoshakGroups,
   } = useMembers();
 
-  //#region fetch member data
-  const fetchMembersListData = async () => {
-    const data = await fetchMembers().unwrap();
-    return data.rows;
-  };
+  // --------------------------
+  // SEARCH PARAMS
+  // --------------------------
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get("tab") as MemberTabs) || "all-members";
 
+  // --------------------------
+  // FETCH MEMBERS BASED ON TAB
+  // --------------------------
   useEffect(() => {
     if (activeTab === "all-members") {
-      fetchMembersListData();
+      fetchMembers().unwrap();
     } else {
       fetchMembersByPoshakGroups();
     }
   }, [activeTab]);
 
-  // Handle search input change
+  // --------------------------
+  // HANDLE SEARCH CHANGE
+  // --------------------------
   const handleSearchChange = (value: string) => {
-    setSearchText(value); // Update Redux state for filtering
+    setSearchText(value);
   };
 
   return (
@@ -69,13 +73,15 @@ export default function Members() {
     >
       <Tabs
         value={activeTab}
-        onValueChange={(val) => setActiveTab(val as MemberTabs)}
+        onValueChange={(val) => setSearchParams({ tab: val })}
         className="w-full h-full flex flex-col justify-start"
       >
         <TabsList className="w-full bg-primaryColor rounded-none justify-evenly h-10 pb-2">
           <TabsTrigger value="all-members">All Members</TabsTrigger>
           <TabsTrigger value="by-group">Poshak Groups</TabsTrigger>
         </TabsList>
+
+        {/* All Members */}
         <TabsContent value="all-members" className="h-full w-full">
           {loading ? (
             <LoadingSpinner />
@@ -88,7 +94,7 @@ export default function Members() {
                   <MemberListCard
                     key={member.smk_no}
                     member={member}
-                    from={"members"}
+                    from="members"
                   />
                 );
               }}
@@ -106,6 +112,8 @@ export default function Members() {
             />
           )}
         </TabsContent>
+
+        {/* Poshak Group */}
         <TabsContent value="by-group" className="h-full w-full overflow-hidden">
           {loading ? (
             <LoadingSpinner />
