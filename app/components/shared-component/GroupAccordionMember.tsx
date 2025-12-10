@@ -45,18 +45,19 @@ function GroupAccordionMember({
               <AccordionTrigger
                 showArrow={false}
                 className={cn(
-                  "sticky top-0 z-10 w-full flex justify-center items-center py-2 rounded-none px-4 border-b border-t border-borderColor ring-0 bg-gray-100"
+                  "sticky top-0 z-10 w-full flex justify-center items-center py-2 rounded-none px-4 border-b border-t border-borderColor bg-gray-200"
                 )}
               >
-                <div className="w-full flex justify-between items-center no-underline">
+                <div className="w-full flex justify-between items-center">
                   <div className="w-full flex flex-col justify-start items-start">
-                    <span className="text-sm text-textColor no-underline">
+                    <span className="text-sm font-semibold text-textColor">
                       {poshakLeaderName}
                     </span>
-                    <span className="text-xs text-textLightColor font-normal">
+                    <span className="text-xs text-textLightColor">
                       Total {group?.users?.length} Members
                     </span>
                   </div>
+
                   {from === "report" && (
                     <div className="flex justify-center items-center gap-3">
                       <CircularProgress
@@ -69,6 +70,7 @@ function GroupAccordionMember({
                   )}
                 </div>
               </AccordionTrigger>
+
               <AccordionContent className="p-0">
                 {group?.users?.map((member) => (
                   <MemberListCard

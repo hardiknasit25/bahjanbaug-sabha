@@ -106,7 +106,7 @@ export default function Members() {
             />
           )}
         </TabsContent>
-        <TabsContent value="by-group" className="h-full w-full">
+        <TabsContent value="by-group" className="h-full w-full overflow-hidden">
           {loading ? (
             <LoadingSpinner />
           ) : filteredMembersByPoshakGroups.length === 0 ? (
