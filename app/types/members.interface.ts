@@ -21,10 +21,11 @@ export interface MemberData {
   family_leader_id?: number;
   is_seva?: boolean;
   seva?: string;
-  parichit_bhakt_name?: string;
+  parichit_bhakat_name?: string;
   group_id?: number[];
   attendance_id?: number;
   is_present?: boolean;
+  is_smruti?: boolean;
   total_sabha: number;
   total_present: number;
   total_absent: number;
@@ -65,8 +66,9 @@ export interface MemberPayload {
   family_leader_id: number | null;
   is_seva?: boolean;
   seva?: string;
-  parichit_bhakt_name: string;
+  parichit_bhakat_name: string;
   group_id: number[];
+  is_smruti: boolean;
 }
 
 export type MemberStatus = "present" | "absent";

@@ -7,7 +7,7 @@ import {
   userCreateSchema,
   type UserCreateFormData,
 } from "~/schemas/memberSchema";
-import type { MemberPayload } from "~/types/members.interface";
+import type { MemberData, MemberPayload } from "~/types/members.interface";
 import ChipController from "../formController.tsx/ChipController";
 import DatePickerController from "../formController.tsx/DatePickerController";
 import InputController from "../formController.tsx/InputController";
@@ -15,10 +15,11 @@ import MultiSelect from "../formController.tsx/MultiSelect";
 import TextAreaController from "../formController.tsx/TextAreaController";
 import ErrorMessage from "../shared-component/ErrorMessage";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { useNavigate } from "react-router";
 
 interface MemberFormProps {
   mode?: "create" | "update";
-  initialData?: Partial<UserCreateFormData>;
+  initialData?: MemberData;
 }
 
 const occupationOptions = [
@@ -44,7 +45,9 @@ const satsangDayOptions = [
 ];
 
 function MemberForm({ mode = "create", initialData }: MemberFormProps) {
-  const { groupSelect, fetchGroupSelect, createMember } = useMembers();
+  const { groupSelect, fetchGroupSelect, createMember, updateMember } =
+    useMembers();
+  const navigate = useNavigate();
 
   const {
     control,
@@ -63,13 +66,14 @@ function MemberForm({ mode = "create", initialData }: MemberFormProps) {
       mulgam: initialData?.mulgam || "",
       smk_no: initialData?.smk_no || "",
       address: initialData?.address || "",
-      is_married: initialData?.is_married ?? undefined,
+      is_married: (initialData?.is_married || false) ?? undefined,
       is_family_leader: initialData?.is_family_leader ?? undefined,
-      is_seva: initialData?.is_seva ?? undefined,
+      is_seva: (initialData?.is_seva || false) ?? undefined,
       occupation: initialData?.occupation,
       occupation_field: initialData?.occupation_field || "",
       seva: initialData?.seva || "",
-      parichit_bhakt_name: initialData?.parichit_bhakt_name || "",
+      parichit_bhakat_name: initialData?.parichit_bhakat_name || "",
+      is_smruti: initialData?.is_smruti ?? undefined,
       group_id: initialData?.group_id || [],
     },
   }) as any;
@@ -82,9 +86,14 @@ function MemberForm({ mode = "create", initialData }: MemberFormProps) {
       is_job: data.occupation === "job",
       family_leader_id: null,
     };
-    console.log("payload: ", payload);
     if (mode === "create") {
-      await createMember(payload);
+      const result = await createMember(payload).unwrap();
+      if (result) {
+        navigate(`/members`);
+      }
+    } else if (mode === "update") {
+      await updateMember(initialData?.id as number, payload).unwrap();
+      navigate(`/members/${initialData?.id}`);
     }
   };
 
@@ -129,7 +138,6 @@ function MemberForm({ mode = "create", initialData }: MemberFormProps) {
           label="Email"
           type="email"
           placeholder="Enter email address"
-          required
         />
 
         <InputController
@@ -295,6 +303,42 @@ function MemberForm({ mode = "create", initialData }: MemberFormProps) {
           />
         </div>
 
+        <div className="space-y-2">
+          <label className="flex items-center space-x-2 cursor-pointer text-sm font-medium">
+            Is Smruti User ? <span className="text-red-500 ml-1"> *</span>
+          </label>
+          <Controller
+            name="is_smruti"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <>
+                <RadioGroup
+                  value={
+                    field.value === true
+                      ? "yes"
+                      : field.value === false
+                        ? "no"
+                        : undefined
+                  }
+                  onValueChange={(val) => field.onChange(val === "yes")}
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value="yes" id="family-leader-yes" />
+                    <label htmlFor="family-leader-yes">Yes</label>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <RadioGroupItem value="no" id="family-leader-no" />
+                    <label htmlFor="family-leader-no">No</label>
+                  </div>
+                </RadioGroup>
+                {error && <ErrorMessage error={error.message as string} />}
+              </>
+            )}
+          />
+        </div>
+
         {/* <InputController
           name="family_leader_id"
           control={control}
@@ -368,7 +412,7 @@ function MemberForm({ mode = "create", initialData }: MemberFormProps) {
         />
 
         <InputController
-          name="parichit_bhakt_name"
+          name="parichit_bhakat_name"
           control={control}
           label="Parichit Bhakt Name"
           placeholder="Enter parichit bhakt name"

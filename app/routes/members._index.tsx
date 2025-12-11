@@ -39,6 +39,7 @@ export default function Members() {
   // FETCH MEMBERS BASED ON TAB
   // --------------------------
   useEffect(() => {
+    setSearchText("");
     if (activeTab === "all-members") {
       fetchMembers().unwrap();
     } else {

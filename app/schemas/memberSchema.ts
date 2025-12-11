@@ -24,9 +24,12 @@ export const userCreateSchema = z.object({
   is_family_leader: z.boolean(),
 
   is_seva: z.boolean(),
+
+  is_smruti: z.boolean(),
+
   seva: z.string().optional(),
 
-  parichit_bhakt_name: z.string(),
+  parichit_bhakat_name: z.string(),
 
   group_id: z.array(z.number().int()),
 });

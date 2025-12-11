@@ -10,6 +10,7 @@ import {
   selectFilteredMembersByPoshakGroups,
   setMembers,
   setSearchText,
+  updateMember,
 } from "~/store/slice/memberSlice";
 import { type MemberData, type MemberPayload } from "~/types/members.interface";
 
@@ -35,6 +36,8 @@ export const useMembers = () => {
     fetchMembersByPoshakGroups: () => dispatch(fetchMembersByPoshakGroups()),
     createMember: (memberData: MemberPayload) =>
       dispatch(createMember(memberData)),
+    updateMember: (memberId: number, memberData: MemberPayload) =>
+      dispatch(updateMember({ memberId, memberData })),
     enterSabhaReason: (sabha_id: number, user_id: number, reason: string) =>
       dispatch(enterSabhaReason({ sabha_id, user_id, reason })),
     fetchGroupSelect: () => dispatch(fetchGroupSelect()),

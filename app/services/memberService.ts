@@ -51,6 +51,19 @@ export const memberService = {
     }
   },
 
+  //#region update member
+  updateMember: async (memberId: number, memberData: MemberPayload) => {
+    try {
+      const response = await axiosInstance.put(
+        `${API_ENDPOINTS.MEMBERS.BASE}/${memberId}`,
+        memberData
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   //#region fetch members by group
   getPoshakGroup: async (params: CommonParams) => {
     try {

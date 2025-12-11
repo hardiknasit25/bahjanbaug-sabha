@@ -86,6 +86,23 @@ export const createMember = createAsyncThunk(
   }
 );
 
+//#region update member
+export const updateMember = createAsyncThunk(
+  "members/updateMember",
+  async (
+    payload: { memberId: number; memberData: MemberPayload },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { memberId, memberData } = payload;
+      const response = await memberService.updateMember(memberId, memberData);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 //#reion fetch poshak groups
 export const fetchPoshakGroups = createAsyncThunk(
   "members/fetchPoshakGroups",
@@ -212,8 +229,35 @@ const memberSlice = createSlice({
       .addCase(createMember.fulfilled, (state, action) => {
         state.loading = false;
         state.members.push(action.payload);
+        state.totalMembers += 1;
       })
       .addCase(createMember.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    //#region update member
+    builder
+      .addCase(updateMember.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateMember.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.members.findIndex(
+          (member) => member.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.members[index] = action.payload;
+        }
+        if (
+          state.selectedMember &&
+          state.selectedMember.id === action.payload.id
+        ) {
+          state.selectedMember = action.payload;
+        }
+      })
+      .addCase(updateMember.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

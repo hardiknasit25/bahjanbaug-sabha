@@ -22,6 +22,27 @@ function MemberDetails() {
     fetchMemberById(memberId);
   }, [memberId]);
 
+  function calculateAge(birthDateInput: string | Date | undefined | null) {
+    if (!birthDateInput) return null;
+
+    const birthDate = new Date(birthDateInput);
+    if (isNaN(birthDate.getTime())) return null;
+
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const hasNotHadBirthdayThisYear =
+      today.getMonth() < birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() &&
+        today.getDate() < birthDate.getDate());
+
+    if (hasNotHadBirthdayThisYear) {
+      age -= 1;
+    }
+
+    return age;
+  }
+
   return (
     <LayoutWrapper
       showTab={false}
@@ -58,6 +79,11 @@ function MemberDetails() {
                   value: selectedMember?.birth_day ?? null,
                 },
                 {
+                  title: "age",
+                  value:
+                    calculateAge(selectedMember?.birth_day)?.toString() ?? null,
+                },
+                {
                   title: "satsang day",
                   value: selectedMember?.satsang_day ?? null,
                 },
@@ -90,7 +116,7 @@ function MemberDetails() {
                 },
                 {
                   title: "parichhit bhakt",
-                  value: selectedMember?.parichit_bhakt_name ?? null,
+                  value: selectedMember?.parichit_bhakat_name ?? null,
                 },
               ]}
             />

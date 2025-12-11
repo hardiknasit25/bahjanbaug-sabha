@@ -84,11 +84,12 @@ function DatePickerController({
                   setOpen(false); // CLOSE POPUP HERE
                 }}
                 captionLayout="dropdown"
-                disabled={
-                  disablePastDates
-                    ? (date) => date < new Date(new Date().setHours(0, 0, 0, 0))
-                    : undefined
-                }
+                disabled={(date) => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0); // normalize
+
+                  return date > today; // disable any future date
+                }}
               />
             </PopoverContent>
           </Popover>
