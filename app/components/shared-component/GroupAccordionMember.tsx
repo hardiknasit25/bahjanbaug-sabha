@@ -43,7 +43,6 @@ function GroupAccordionMember({
           <Accordion type="multiple" defaultValue={[`group-${index}`]}>
             <AccordionItem value={`group-${index}`} key={`group-${index}`}>
               <AccordionTrigger
-                showArrow={false}
                 className={cn(
                   "sticky top-0 z-10 w-full flex justify-center items-center py-2 rounded-none px-4 border-b border-t border-borderColor bg-gray-200"
                 )}
