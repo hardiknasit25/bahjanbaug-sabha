@@ -20,6 +20,7 @@ import {
   DrawerTrigger,
 } from "~/components/ui/drawer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { useMembers } from "~/hooks/useMembers";
 import { useReport } from "~/hooks/useReport";
 import { useSabha } from "~/hooks/useSabha";
 import type { filterType } from "~/services/reportService";
@@ -53,6 +54,7 @@ export default function Report() {
     loading,
     searchText,
     filteredMembers,
+    filteredMembersByPoshakGroups,
     groupReport,
     sabhaCount,
     fetchMembersReport,
@@ -81,6 +83,7 @@ export default function Report() {
 
     setActiveTab(urlTab);
     setSelectedFilter(urlFilter);
+    setSearchText("");
 
     if (urlTab === "all-members") {
       fetchMembersReport(urlFilter);
@@ -213,7 +216,7 @@ export default function Report() {
             <LoadingSpinner />
           ) : (
             <GroupAccordionMember
-              groupData={groupReport}
+              groupData={filteredMembersByPoshakGroups}
               from="report"
               totalSabha={sabhaCount}
             />

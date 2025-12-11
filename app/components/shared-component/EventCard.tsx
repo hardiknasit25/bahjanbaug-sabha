@@ -47,37 +47,39 @@ function EventCard({ sabha }: { sabha: SabhaData }) {
         {/* Content */}
         <div className="flex flex-col flex-1 py-3">
           <div className="flex justify-start items-center gap-2">
-            <h2 className="font-semibold text-lg text-textColor capitalize">
+            <h2 className="font-semibold text-base text-textColor capitalize">
               {sabha?.title}
             </h2>
-            {status === "upcoming" && <Pencil size={16} />}
           </div>
           <p className="text-sm text-textLightColor">{sabha?.sabha_date}</p>
         </div>
 
         {/* Start Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (status === "completed" || status === "running") {
-              return navigate(`/sabha/attendance/${sabha.id}`);
-            }
-            setOpen(true);
-          }}
-          className={cn(
-            "block px-5 py-2 text-sm text-white font-medium rounded-full z-20",
-            status === "upcoming" && "bg-blue-500",
-            status === "completed" && "bg-green-500 cursor-not-allowed",
-            status === "running" && "bg-orange-500"
-          )}
-        >
-          {status === "upcoming"
-            ? "Start"
-            : status === "running"
-              ? "Join"
-              : "Completed"}
-        </button>
+        <div className="flex justify-center items-center gap-4">
+          {status === "upcoming" && <Pencil size={16} />}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              if (status === "completed" || status === "running") {
+                return navigate(`/sabha/attendance/${sabha.id}`);
+              }
+              setOpen(true);
+            }}
+            className={cn(
+              "block px-5 py-2 text-sm text-white font-medium rounded-full z-20",
+              status === "upcoming" && "bg-blue-500",
+              status === "completed" && "bg-green-500 cursor-not-allowed",
+              status === "running" && "bg-orange-500"
+            )}
+          >
+            {status === "upcoming"
+              ? "Start"
+              : status === "running"
+                ? "Join"
+                : "Completed"}
+          </button>
+        </div>
       </div>
 
       {status === "completed" && (

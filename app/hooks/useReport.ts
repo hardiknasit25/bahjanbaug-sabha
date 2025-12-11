@@ -4,6 +4,7 @@ import {
   fetchGroupReport,
   fetchMembersReport,
   selectFilteredReportMembers,
+  selectFilteredReportMembersByPoshakGroups,
   setSearchText,
 } from "~/store/slice/reportSlice";
 
@@ -11,6 +12,9 @@ export const useReport = () => {
   const dispatch = useAppDispatch();
   const reportState = useAppSelector((state) => state.report);
   const filteredMembers = useAppSelector(selectFilteredReportMembers);
+  const filteredMembersByPoshakGroups = useAppSelector(
+    selectFilteredReportMembersByPoshakGroups
+  );
 
   const actions = {
     setSearchText: (searchText: string) => dispatch(setSearchText(searchText)),
@@ -27,6 +31,7 @@ export const useReport = () => {
     // State
     ...reportState,
     filteredMembers,
+    filteredMembersByPoshakGroups,
 
     // Actions
     ...actions,

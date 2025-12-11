@@ -110,4 +110,19 @@ export const selectFilteredReportMembers = (state: { report: ReportState }) => {
   return filterMembers(memberReport, searchText);
 };
 
+export const selectFilteredReportMembersByPoshakGroups = (state: {
+  report: ReportState;
+}) => {
+  const { groupReport, searchText } = state.report;
+  if (!searchText?.trim()) return groupReport;
+
+  // Filter members within each group and keep groups that have matching members
+  return groupReport
+    .map((group) => ({
+      ...group,
+      users: filterMembers(group.users, searchText),
+    }))
+    .filter((group) => group.users.length > 0);
+};
+
 export default reportSlice.reducer;
