@@ -70,7 +70,7 @@ function GroupAccordionMember({
                 </div>
               </AccordionTrigger>
 
-              <AccordionContent className="p-0">
+              <AccordionContent className="p-0 bg-white">
                 {group?.users?.map((member) => (
                   <MemberListCard
                     key={member.smk_no}
